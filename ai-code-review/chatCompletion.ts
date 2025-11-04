@@ -81,7 +81,8 @@ export class ChatCompletion {
             }
         }
 
-        tl.warning(`Unable to process diff for ${fileName} as it exceeds token limits.`)
+        // tl.warning(`Unable to process diff for ${fileName} as it exceeds token limits.`)
+        console.warn(`Unable to process diff for ${fileName} as it exceeds token limits.`)
         return {response: '', promptTokens: 0, completionTokens: 0};
     }
 

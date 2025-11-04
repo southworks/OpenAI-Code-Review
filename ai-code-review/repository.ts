@@ -52,15 +52,16 @@ export class Repository {
     }
 
     private GetTargetBranch(): string {
-        let targetBranchName = tl.getVariable('System.PullRequest.TargetBranchName');
+        // let targetBranchName = tl.getVariable('System.PullRequest.TargetBranchName');
 
-        if (!targetBranchName) {
-            targetBranchName = tl.getVariable('System.PullRequest.TargetBranch')?.replace('refs/heads/', '');
-        }
+        // if (!targetBranchName) {
+        //     targetBranchName = tl.getVariable('System.PullRequest.TargetBranch')?.replace('refs/heads/', '');
+        // }
 
-        if (!targetBranchName) {
-            throw new Error(`Could not find target branch`)
-        }
+        // if (!targetBranchName) {
+        //     throw new Error(`Could not find target branch`)
+        // }
+        const targetBranchName = config.targetBranch;
 
         return `origin/${targetBranchName}`;
     }

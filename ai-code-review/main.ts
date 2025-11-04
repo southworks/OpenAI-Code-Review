@@ -12,27 +12,27 @@ export class Main {
     private static _pullRequest: PullRequest;
 
     public static async Main(): Promise<void> {
-        if (tl.getVariable('Build.Reason') !== 'PullRequest') {
-            tl.setResult(tl.TaskResult.Skipped, "This task must only be used when triggered by a Pull Request.");
-            return;
-        }
+        // if (tl.getVariable('Build.Reason') !== 'PullRequest') {
+        //     tl.setResult(tl.TaskResult.Skipped, "This task must only be used when triggered by a Pull Request.");
+        //     return;
+        // }
 
-        if(!tl.getVariable('System.AccessToken')) {
-            tl.setResult(tl.TaskResult.Failed, "'Allow Scripts to Access OAuth Token' must be enabled. See https://learn.microsoft.com/en-us/azure/devops/pipelines/build/options?view=azure-devops#allow-scripts-to-access-the-oauth-token for more information");
-            return;
-        }
+        // if(!tl.getVariable('System.AccessToken')) {
+        //     tl.setResult(tl.TaskResult.Failed, "'Allow Scripts to Access OAuth Token' must be enabled. See https://learn.microsoft.com/en-us/azure/devops/pipelines/build/options?view=azure-devops#allow-scripts-to-access-the-oauth-token for more information");
+        //     return;
+        // }
 
-        const endpointUrl = tl.getInput('azureOpenAiDeploymentEndpointUrl', true)!;
-        const apiKey = tl.getInput('azureOpenAiApiKey', true)!;
-        const apiVersion = tl.getInput('azureOpenAiApiVersion', true)!;
-        const fileExtensions = tl.getInput('fileExtensions', false);
-        const filesToExclude = tl.getInput('fileExcludes', false);
-        const additionalPrompts = tl.getInput('additionalPrompts', false)?.split(',')
-        const promptTokensPricePerMillionTokens = parseFloat(tl.getInput('promptTokensPricePerMillionTokens', false) ?? '0.');
-        const completionTokensPricePerMillionTokens = parseFloat(tl.getInput('completionTokensPricePerMillionTokens', false) ?? '0.');
-        const maxTokens = parseInt(tl.getInput('maxTokens', false) ?? '16384');
-        const reviewWholeDiffAtOnce = tl.getBoolInput('reviewWholeDiffAtOnce', false);
-        const addCostToComments = tl.getBoolInput('addCostToComments', false);
+        const endpointUrl = config.azureOpenAiDeploymentEndpointUrl
+        const apiKey = config.azureOpenAiApiKey;
+        const apiVersion = config.azureOpenAiApiVersion;
+        const fileExtensions = config.fileExtensions;
+        const filesToExclude = config.fileExcludes;
+        const additionalPrompts = config.additionalPrompts?.split(',')
+        const promptTokensPricePerMillionTokens = parseFloat(config.promptTokensPricePerMillionTokens ?? '0.');
+        const completionTokensPricePerMillionTokens = parseFloat(config.completionTokensPricePerMillionTokens ?? '0.');
+        const maxTokens = parseInt(config.maxTokens ?? '16384');
+        const reviewWholeDiffAtOnce = config.reviewWholeDiffAtOnce;
+        const addCostToComments = config.addCostToComments; 
 
         const client = new AzureOpenAI({
             endpoint: endpointUrl,
@@ -46,9 +46,9 @@ export class Main {
 
         this._chatCompletion = new ChatCompletion(
             client,
-            tl.getBoolInput('reviewBugs', true),
-            tl.getBoolInput('reviewPerformance', true),
-            tl.getBoolInput('reviewBestPractices', true),
+            config.reviewBugs,
+            config.reviewPerformance,
+            config.reviewBestPractices,
             additionalPrompts,
             maxTokens,
             filesToReview.length
@@ -56,7 +56,8 @@ export class Main {
 
         await this._pullRequest.DeleteComments();
 
-        tl.setProgress(0, 'Performing Code Review');
+        // tl.setProgress(0, 'Performing Code Review');
+        console.info('Performing Code Review');
         let promptTokensTotal = 0;
         let completionTokensTotal = 0;
         let fullDiff = '';
@@ -70,12 +71,15 @@ export class Main {
 
                 if(review.response.indexOf('NO_COMMENT') < 0) {
                     console.info(`Completed review of file ${fileToReview}`)
-                    await this._pullRequest.AddComment(fileToReview, review.response);
+                    console.log("Reviewed file: " + fileToReview);
+                    console.log("Review response: " + review.response);
+                    // await this._pullRequest.AddComment(fileToReview, review.response);
                 } else {
                     console.info(`No comments for file ${fileToReview}`)
                 }
 
-                tl.setProgress((fileToReview.length / 100) * index, 'Performing Code Review');
+                // tl.setProgress((fileToReview.length / 100) * index, 'Performing Code Review');
+                console.log("Progress: " + (fileToReview.length / 100) * index);
             } else {
                 fullDiff += diff;
             }

@@ -9,11 +9,12 @@ interface Config {
   reviewPerformance: boolean;
   reviewBestPractices: boolean;
   reviewWholeDiffAtOnce: boolean;
-  maxTokens: number;
+  maxTokens: string;
   fileExtensions: string;
   fileExcludes?: string;
   additionalPrompts?: string;
   baseDir?: string;
+  targetBranch?: string;
 }
 
 export const config: Config = {
@@ -22,7 +23,7 @@ export const config: Config = {
   azureOpenAiApiVersion: "",
   promptTokensPricePerMillionTokens: "0.15",
   completionTokensPricePerMillionTokens: "0.6",
-  maxTokens: 16384,
+  maxTokens: '16384',
   reviewWholeDiffAtOnce: false,
   addCostToComments: false,
   reviewBugs: true,
@@ -31,5 +32,6 @@ export const config: Config = {
   fileExtensions: ".js,.ts,.css,.html",
   fileExcludes: undefined,
   additionalPrompts: undefined,
-  baseDir: process.cwd()
+  baseDir: process.cwd(),
+  targetBranch: ''
 };
