@@ -1,11 +1,12 @@
 import * as tl from "azure-pipelines-task-lib/task";
 import { SimpleGit, SimpleGitOptions, simpleGit } from "simple-git";
 import binaryExtensions from "./binaryExtensions";
+import { config } from "./config";
 
 export class Repository {
 
     private gitOptions: Partial<SimpleGitOptions> = {
-        baseDir: `${tl.getVariable('System.DefaultWorkingDirectory')}`,
+        baseDir: config.baseDir,
         binary: 'git'
     };
 

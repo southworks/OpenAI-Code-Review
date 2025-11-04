@@ -4,6 +4,7 @@ import { ChatCompletion } from './chatCompletion';
 import { Repository } from './repository';
 import { PullRequest } from './pullrequest';
 import "@azure/openai/types";
+import { config } from "./config";
 
 export class Main {
     private static _chatCompletion: ChatCompletion;
