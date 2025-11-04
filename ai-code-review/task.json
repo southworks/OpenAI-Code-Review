@@ -1,0 +1,132 @@
+{
+    "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
+    "id": "abd1f390-3d55-4eb2-af0a-273c5dbf256f",
+    "name": "AICodeReview",
+    "friendlyName": "AI Code Review",
+    "description": "Complete a Code Review using Azure OpenAI services",
+    "category": "Utility",
+    "author": "Tommi Laukkanen",
+    "version": {
+        "Major": 1,
+        "Minor": 0,
+        "Patch": 20
+    },
+    "instanceNameFormat": "AI Code Review $(message)",
+    "inputs": [
+        {
+            "name": "azureOpenAiDeploymentEndpointUrl",
+            "type": "string",
+            "label": "Azure OpenAI deployment endpoint URL",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "URL to your Azure OpenAI deployment endpoint."
+        },
+        {
+            "name": "azureOpenAiApiKey",
+            "type": "string",
+            "label": "Key to your Azure OpenAI deployment endpoint",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Key to your Azure OpenAI deployment endpoint."
+        },
+        {
+            "name": "azureOpenAiApiVersion",
+            "type": "string",
+            "label": "Azure OpenAI API version",
+            "defaultValue": "2024-07-01-preview",
+            "required": true,
+            "helpMarkDown": "Azure OpenAI API version."
+        },
+        {
+            "name": "reviewBugs",
+            "type": "boolean",
+            "label": "Check for bugs",
+            "defaultValue": true,
+            "helpMarkDown": "Specify whether to enable bug checking during the code review process.\n\n- Set to `true` to perform bug checks.\n- Set to `false` to skip bug checks.\n\nBug checking helps identify and address potential issues in the code. Default value is `true`."
+        },
+        {
+            "name": "reviewPerformance",
+            "type": "boolean",
+            "label": "Check for performance problems",
+            "defaultValue": true,
+            "helpMarkDown": "Specify whether to include performance checks during the code review process.\n\n- Set to `true` to perform performance checks.\n- Set to `false` to skip performance checks.\n\nEnabling performance checks helps identify and address potential performance-related issues in the code. Default value is `true`."
+        },
+        {
+            "name": "reviewBestPractices",
+            "type": "boolean",
+            "label": "Check for missed best practices",
+            "defaultValue": true,
+            "helpMarkDown": "Specify whether to include checks for missed best practices during the code review process.\n\n- Set to `true` to perform best practices checks.\n- Set to `false` to skip best practices checks.\n\nEnabling best practices checks helps ensure adherence to coding standards and identifies areas for improvement. Default value is `true`."
+        },
+        {
+            "name": "fileExtensions",
+            "type": "string",
+            "label": "File Extensions",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "Specify a comma-separated list of file extensions for which you want to perform a code review. This input helps narrow down the scope of the code review to specific file types.\n\n**Example:**\n```plaintext\n\".js,.ts,.css,.html\"\n```\n\nMake sure to provide the file extensions without spaces after the commas."
+        },
+        {
+            "name": "fileExcludes",
+            "type": "string",
+            "label": "Files to exclude",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "## Files to Exclude Configuration\n\n### Description\nSpecify a comma-separated list of file names that should be excluded from code reviews. This is useful for excluding sensitive files or preventing certain files from being reviewed.\n\n### Format\nProvide a list of file names separated by commas. For example: `file1.js, file2.py, secret.txt`\n\n### Default Value\nIf no files are specified, all files will be considered for code review by default."
+        },
+        {
+            "name": "additionalPrompts",
+            "type": "multiLine",
+            "label": "Additional Prompts",
+            "defaultValue": "",
+            "required": false,
+            "helpMarkDown": "Specify additional Open AI prompt to enhance the code review process.\n\n- This prompt will be used in conjunction with the main code review prompts.\n\n**Example:**\n```plaintext\nFix variable naming, Ensure consistent indentation, Review error handling approach\n```"
+        },
+        {
+            "name": "promptTokensPricePerMillionTokens",
+            "type": "string",
+            "label": "Input prompt tokens price per million tokens",
+            "defaultValue": "0",
+            "required": false,
+            "helpMarkDown": "Unit price of input tokens per million tokens. Check from Azure pricing table."
+        },
+        {
+            "name": "completionTokensPricePerMillionTokens",
+            "type": "multiLine",
+            "label": "Completion output tokens price per million tokens",
+            "defaultValue": "0",
+            "required": false,
+            "helpMarkDown": "Unit price of completion tokens per million tokens. Check from Azure pricing table."
+        },
+        {
+            "name": "reviewWholeDiffAtOnce",
+            "type": "boolean",
+            "label": "Review whole diff at once",
+            "defaultValue": false,
+            "helpMarkDown": "Specify whether to review the whole diff at once or review each file separately.\n\n- Set to `true` to review the whole diff at once.\n- Set to `false` to review each file separately.\n\nDefault value is `false`."
+        },
+        {
+            "name": "maxTokens",
+            "type": "string",
+            "label": "Max tokens",
+            "defaultValue": "16384",
+            "required": false,
+            "helpMarkDown": "Maximum number of tokens to use for each code review request. The default value is 16384 tokens."
+        },
+        {
+            "name": "addCostToComments",
+            "type": "boolean",
+            "label": "Add cost to comment",
+            "defaultValue": false,
+            "helpMarkDown": "Specify whether to add the cost of the code review to the comment.\n\n- Set to `true` to add the cost of the code review to the comment.\n- Set to `false` to skip adding the cost of the code review to the comment.\n\nDefault value is `false`."
+        }
+    ],
+    "execution": {
+        "Node10": {
+            "target": "dist/main.js"
+        },
+        "Node16": {
+            "target": "dist/main.js"
+        }
+    }
+}
