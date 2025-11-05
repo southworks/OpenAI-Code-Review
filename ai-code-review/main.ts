@@ -5,6 +5,7 @@ import { Repository } from './repository';
 import { PullRequest } from './pullrequest';
 import "@azure/openai/types";
 import { config } from "./config";
+// Hi World
 
 export class Main {
     private static _chatCompletion: ChatCompletion;
@@ -68,7 +69,6 @@ export class Main {
             if(!reviewWholeDiffAtOnce) {
                 console.log("Diff: " + diff);
                 console.log("File: " + fileToReview);
-                continue; // skipped until GetDiff is fixed
                 let review = await this._chatCompletion.PerformCodeReview(diff, fileToReview);
                 promptTokensTotal += review.promptTokens;
                 completionTokensTotal += review.completionTokens;
