@@ -1,6 +1,9 @@
-import tl = require('azure-pipelines-task-lib/task');
+import * as tl from 'azure-pipelines-task-lib/task';
 import { encode } from 'gpt-tokenizer';
 import OpenAI, { AzureOpenAI } from 'openai';
+
+// Test branch diff
+// Second line diff
 
 export class ChatCompletion {
     private readonly systemMessage: string = '';
@@ -92,3 +95,6 @@ export class ChatCompletion {
     }
 
 }
+
+
+// Last Line diff.
