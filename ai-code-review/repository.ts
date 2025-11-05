@@ -44,10 +44,8 @@ export class Repository {
     }
 
     public async GetDiff(fileName: string): Promise<string> {
-        let targetBranch = this.GetTargetBranch();
-        
-        let diff = await this._repository.diff([targetBranch, '--', fileName]);
-
+        const targetBranch = this.GetTargetBranch();
+        const diff = await this._repository.diff([targetBranch, '--', fileName]);
         return diff;
     }
 
@@ -61,8 +59,14 @@ export class Repository {
         // if (!targetBranchName) {
         //     throw new Error(`Could not find target branch`)
         // }
-        const targetBranchName = config.targetBranch;
+        let targetBranchName = config.targetBranch;
+        if (targetBranchName.startsWith('refs/heads/')) {
+            targetBranchName = targetBranchName.replace('refs/heads/', '');
+        }
+        if (targetBranchName === 'main') {
+            targetBranchName = 'origin/main';
+        }
 
-        return `origin/${targetBranchName}`;
+        return targetBranchName;
     }
 }

@@ -1,6 +1,6 @@
 import * as tl from "azure-pipelines-task-lib/task";
 import { Agent } from "https";
-import fetch from 'node-fetch';
+// import fetch from 'node-fetch';
 
 export class PullRequest {
     private _httpsAgent: Agent;
@@ -51,7 +51,7 @@ export class PullRequest {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${tl.getVariable('SYSTEM.ACCESSTOKEN')}`, 'Content-Type': 'application/json' },
             body: JSON.stringify(body),
-            agent: this._httpsAgent
+            // agent: this._httpsAgent
         });
 
         if (response.ok == false) {
@@ -71,7 +71,7 @@ export class PullRequest {
         let response = await fetch(removeCommentUrl, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${tl.getVariable('System.AccessToken')}`, 'Content-Type': 'application/json' },
-            agent: this._httpsAgent
+            // agent: this._httpsAgent
         });
 
         if (response.ok == false) {
@@ -100,7 +100,7 @@ export class PullRequest {
         let threadsEndpoint = `${this._collectionUri}${this._teamProjectId}/_apis/git/repositories/${this._repositoryName}/pullRequests/${this._pullRequestId}/threads?api-version=5.1`;
         let threadsResponse = await fetch(threadsEndpoint, {
             headers: { 'Authorization': `Bearer ${tl.getVariable('System.AccessToken')}`, 'Content-Type': 'application/json' },
-            agent: this._httpsAgent
+            // agent: this._httpsAgent
         });
 
         if (threadsResponse.ok == false) {
@@ -115,7 +115,7 @@ export class PullRequest {
         let commentsEndpoint = `${this._collectionUri}${this._teamProjectId}/_apis/git/repositories/${this._repositoryName}/pullRequests/${this._pullRequestId}/threads/${thread.id}/comments?api-version=5.1`;
         let commentsResponse = await fetch(commentsEndpoint, {
             headers: { 'Authorization': `Bearer ${tl.getVariable('System.AccessToken')}`, 'Content-Type': 'application/json' },
-            agent: this._httpsAgent
+            // agent: this._httpsAgent
         });
 
         if (commentsResponse.ok == false) {

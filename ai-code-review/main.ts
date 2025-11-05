@@ -1,4 +1,4 @@
-import tl = require('azure-pipelines-task-lib/task');
+import * as tl from 'azure-pipelines-task-lib/task';
 import { AzureOpenAI } from 'openai';
 import { ChatCompletion } from './chatCompletion';
 import { Repository } from './repository';
@@ -25,6 +25,7 @@ export class Main {
         const endpointUrl = config.azureOpenAiDeploymentEndpointUrl
         const apiKey = config.azureOpenAiApiKey;
         const apiVersion = config.azureOpenAiApiVersion;
+        const modelName = config.modelName;
         const fileExtensions = config.fileExtensions;
         const filesToExclude = config.fileExcludes;
         const additionalPrompts = config.additionalPrompts?.split(',')
@@ -34,18 +35,18 @@ export class Main {
         const reviewWholeDiffAtOnce = config.reviewWholeDiffAtOnce;
         const addCostToComments = config.addCostToComments; 
 
-        const client = new AzureOpenAI({
-            endpoint: endpointUrl,
-            apiKey: apiKey,
-            apiVersion: apiVersion
-        });
-        
+
+        const options = { endpoint: endpointUrl, apiKey, deployment: config.deploymentName, apiVersion };
+
+        const client = new AzureOpenAI(options);
+
         this._repository = new Repository();
         this._pullRequest = new PullRequest();
         let filesToReview = await this._repository.GetChangedFiles(fileExtensions, filesToExclude);
 
         this._chatCompletion = new ChatCompletion(
             client,
+            modelName,
             config.reviewBugs,
             config.reviewPerformance,
             config.reviewBestPractices,
@@ -54,7 +55,7 @@ export class Main {
             filesToReview.length
         );
 
-        await this._pullRequest.DeleteComments();
+        // await this._pullRequest.DeleteComments();
 
         // tl.setProgress(0, 'Performing Code Review');
         console.info('Performing Code Review');
@@ -65,6 +66,9 @@ export class Main {
             const fileToReview = filesToReview[index];
             let diff = await this._repository.GetDiff(fileToReview);
             if(!reviewWholeDiffAtOnce) {
+                console.log("Diff: " + diff);
+                console.log("File: " + fileToReview);
+                continue; // skipped until GetDiff is fixed
                 let review = await this._chatCompletion.PerformCodeReview(diff, fileToReview);
                 promptTokensTotal += review.promptTokens;
                 completionTokensTotal += review.completionTokens;
@@ -99,7 +103,7 @@ export class Main {
 
             if(review.response.indexOf('NO_COMMENT') < 0) {
                 console.info(`Completed review for ${filesToReview.length} files`)
-                await this._pullRequest.AddComment("", comment);
+                // await this._pullRequest.AddComment("", comment);
             } else {
                 console.info(`No comments for full diff`)
             }

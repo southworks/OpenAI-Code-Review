@@ -14,13 +14,15 @@ interface Config {
   fileExcludes?: string;
   additionalPrompts?: string;
   baseDir?: string;
-  targetBranch?: string;
+  targetBranch: string;
+  deploymentName: string;
+  modelName: string;
 }
 
 export const config: Config = {
   azureOpenAiDeploymentEndpointUrl: "",
   azureOpenAiApiKey: "",
-  azureOpenAiApiVersion: "",
+  azureOpenAiApiVersion: "2024-04-01-preview",
   promptTokensPricePerMillionTokens: "0.15",
   completionTokensPricePerMillionTokens: "0.6",
   maxTokens: '16384',
@@ -33,5 +35,7 @@ export const config: Config = {
   fileExcludes: undefined,
   additionalPrompts: undefined,
   baseDir: process.cwd(),
-  targetBranch: ''
+  targetBranch: '',
+  deploymentName: 'gpt-4o-mini',
+  modelName: 'gpt-4o-mini'
 };
