@@ -2,7 +2,7 @@
   "name": "azure-devops-ai-code-review",
   "version": "1.0.6",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/main.js",
   "scripts": {
     "start": "tsc --build tsconfig.json && node dist/main.js",
     "dev": "ts-node-dev --respawn --transpile-only main.ts",
@@ -11,6 +11,9 @@
     "build": "tsc --build tsconfig.json",
     "clean": "rimraf dist"
   },
+  "files": [
+    "dist"
+  ],  
   "keywords": [],
   "author": "Tommi Laukkanen",
   "license": "MIT",

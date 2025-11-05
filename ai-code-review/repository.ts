@@ -60,13 +60,14 @@ export class Repository {
         //     throw new Error(`Could not find target branch`)
         // }
         let targetBranchName = config.targetBranch;
+
         if (targetBranchName.startsWith('refs/heads/')) {
             targetBranchName = targetBranchName.replace('refs/heads/', '');
         }
-        if (targetBranchName === 'main') {
-            targetBranchName = 'origin/main';
-        }
 
-        return targetBranchName;
+        if (!targetBranchName) {
+            throw new Error(`Could not find target branch`)
+        }
+        return `origin/${targetBranchName}`;
     }
 }
