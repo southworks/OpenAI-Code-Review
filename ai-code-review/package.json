@@ -2,22 +2,29 @@
   "name": "azure-devops-ai-code-review",
   "version": "1.0.6",
   "description": "",
-  "main": "index.js",
+  "main": "./dist/main.js",
   "scripts": {
+    "start": "tsc --build tsconfig.json && node dist/main.js",
+    "dev": "ts-node-dev --respawn --transpile-only main.ts",
+    "debug": "tsc --build tsconfig.json && node --inspect-brk dist/main.js",
     "test": "vitest",
     "build": "tsc --build tsconfig.json",
     "clean": "rimraf dist"
   },
+  "files": [
+    "dist"
+  ],  
   "keywords": [],
   "author": "Tommi Laukkanen",
   "license": "MIT",
   "dependencies": {
+    "@azure/identity": "latest",
     "@azure/openai": "2.0.0-beta.2",
     "@dqbd/tiktoken": "1.0.7",
     "azure-devops-extension-sdk": "4.0.2",
     "azure-pipelines-task-lib": "4.17.3",
     "gpt-tokenizer": "2.4.0",
-    "openai": "4.67.1",
+    "openai": "^6.8.1",
     "simple-git": "3.27.0"
   },
   "devDependencies": {
@@ -25,6 +32,8 @@
     "@types/node": "20.16.10",
     "@types/q": "1.5.8",
     "rimraf": "^6.0.1",
-    "sync-request": "6.1.0"
+    "sync-request": "6.1.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.3"
   }
 }
