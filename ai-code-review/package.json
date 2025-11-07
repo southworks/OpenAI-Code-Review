@@ -17,8 +17,8 @@
     "azure-devops-extension-sdk": "4.0.2",
     "azure-pipelines-task-lib": "4.17.3",
     "gpt-tokenizer": "2.4.0",
-    "openai": "6.1.0",
     "node-fetch": "^3.3.2",
+    "openai": "^6.8.1",
     "simple-git": "3.27.0"
   },
   "devDependencies": {

@@ -37,7 +37,7 @@ export class Main {
             endpoint: endpointUrl,
             apiKey: apiKey,
             apiVersion: apiVersion,
-            deployment: 'gpt-4o-mini' // The deployment name you chose when deploying the model
+            deployment: 'gpt-4o-mini'
         });
         
         this._repository = new Repository();
