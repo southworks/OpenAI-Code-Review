@@ -17,7 +17,8 @@
     "azure-devops-extension-sdk": "4.0.2",
     "azure-pipelines-task-lib": "4.17.3",
     "gpt-tokenizer": "2.4.0",
-    "openai": "4.67.1",
+    "openai": "6.1.0",
+    "node-fetch": "^3.3.2",
     "simple-git": "3.27.0"
   },
   "devDependencies": {
@@ -25,6 +26,7 @@
     "@types/node": "20.16.10",
     "@types/q": "1.5.8",
     "rimraf": "^6.0.1",
-    "sync-request": "6.1.0"
+    "sync-request": "6.1.0",
+    "typescript": "^5.9.3"
   }
 }

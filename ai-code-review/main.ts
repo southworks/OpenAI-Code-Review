@@ -36,7 +36,8 @@ export class Main {
         const client = new AzureOpenAI({
             endpoint: endpointUrl,
             apiKey: apiKey,
-            apiVersion: apiVersion
+            apiVersion: apiVersion,
+            deployment: 'gpt-4o-mini' // The deployment name you chose when deploying the model
         });
         
         this._repository = new Repository();
@@ -68,7 +69,8 @@ export class Main {
                 completionTokensTotal += review.completionTokens;
 
                 if(review.response.indexOf('NO_COMMENT') < 0) {
-                    console.info(`Completed review of file ${fileToReview}`)
+                  console.info(`Completed review of file ${fileToReview}`)
+                  console.info(review.response);
                     await this._pullRequest.AddComment(fileToReview, review.response);
                 } else {
                     console.info(`No comments for file ${fileToReview}`)
@@ -93,7 +95,8 @@ export class Main {
             }
 
             if(review.response.indexOf('NO_COMMENT') < 0) {
-                console.info(`Completed review for ${filesToReview.length} files`)
+              console.info(`Completed review for ${filesToReview.length} files`)
+              console.info(review.response);
                 await this._pullRequest.AddComment("", comment);
             } else {
                 console.info(`No comments for full diff`)
