@@ -50,7 +50,7 @@ export class PullRequest {
       
         var response = await fetch(endpoint, {
             method: 'POST',
-            headers: { 'Authorization': `Bearer ${tl.getVariable('SYSTEM.ACCESSTOKEN')}`, 'Content-Type': 'application/json' },
+            headers: { 'Authorization': `Bearer ${tl.getVariable('System.AccessToken')}`, 'Content-Type': 'application/json' },
             body: JSON.stringify(body),
             agent: this._httpsAgent
         });
@@ -61,7 +61,8 @@ export class PullRequest {
             }
 
           tl.warning(response.statusText)
-          console.error(`Failed to add comment to url ${endpoint} the response was ${response}`);
+          console.error(`Failed to add comment to url ${endpoint} the response was:`);
+          console.error(response);
         }
 
         return response.ok;
