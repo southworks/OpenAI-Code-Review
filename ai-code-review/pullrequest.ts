@@ -46,10 +46,11 @@ export class PullRequest {
         }
 
         let endpoint = `${this._collectionUri}${this._teamProjectId}/_apis/git/repositories/${this._repositoryName}/pullRequests/${this._pullRequestId}/threads?api-version=7.0`
-
+      console.info(`Posting comment to ${endpoint}`);
+      
         var response = await fetch(endpoint, {
             method: 'POST',
-            headers: { 'Authorization': `Bearer ${tl.getVariable('SYSTEM.ACCESSTOKEN')}`, 'Content-Type': 'application/json' },
+            headers: { 'Authorization': `Bearer ${tl.getVariable('System.AccessToken')}`, 'Content-Type': 'application/json' },
             body: JSON.stringify(body),
             agent: this._httpsAgent
         });
@@ -59,7 +60,9 @@ export class PullRequest {
                 tl.setResult(tl.TaskResult.Failed, "The Build Service must have 'Contribute to pull requests' access to the repository. See https://stackoverflow.com/a/57985733 for more information");
             }
 
-            tl.warning(response.statusText)
+          tl.warning(response.statusText)
+          console.error(`Failed to add comment to url ${endpoint} the response was:`);
+          console.error(response);
         }
 
         return response.ok;
