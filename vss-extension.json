@@ -1,8 +1,8 @@
 {
   "manifestVersion": 1,
   "id": "ai-code-review",
-  "publisher": "TommiLaukkanen",
-  "version": "1.0.20",
+  "publisher": "SouthWorks",
+  "version": "1.0.0",
   "name": "AI Code Review Task",
   "description": "AI code review extension to review pull request changes using your own Azure OpenAI endpoints",
   "public": false,
@@ -51,11 +51,6 @@
       "addressable": true
     }
   ],
-  "links": {
-    "repository": {
-      "uri": "https://github.com/tlaukkanen/azure-devops-ai-code-review"
-    }
-  },
   "screenshots": [
     {
       "path": "screenshots/review1.jpg"
