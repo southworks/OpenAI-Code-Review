@@ -91,9 +91,11 @@ export class ChatCompletion {
     }
     catch (error) {
       const errorMsg = error instanceof Error ? error.stack || error.message : JSON.stringify(error);
-      tl.error(`Error calling OpenAI chat completion for file ${fileName}: ${errorMsg}`);
-      // Return empty result so caller can continue processing other files
-      return { response: '', promptTokens: 0, completionTokens: 0 };
+      const failMessage = `Error calling OpenAI chat completion for file ${fileName}: ${errorMsg}`;
+      tl.error(failMessage);
+      // Mark the pipeline task as failed and throw to stop further processing
+      tl.setResult(tl.TaskResult.Failed, failMessage);
+      throw new Error(failMessage);
     }
   }
 

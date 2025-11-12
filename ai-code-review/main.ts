@@ -39,6 +39,8 @@ export class Main {
             apiVersion: apiVersion,
             deployment: 'gpt-4o-mini'
         });
+
+        console.info('OpenAI client initialized. With base URL: ' + client.baseURL + ' , api version: ' + client.apiVersion + ' and deployment: ' + client.deploymentName);
         
         this._repository = new Repository();
         this._pullRequest = new PullRequest();
