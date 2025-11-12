@@ -1,7 +1,5 @@
 # AI Code Review DevOps Extension
 
-<a href="https://www.buymeacoffee.com/tlaukkanen" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
-
 ## Supercharge Your Code Reviews with Azure Open AI Services
 
 Use your own Azure OpenAI service endpoints to provide pull request code reviews while keeping your code private.
@@ -88,18 +86,9 @@ A: Ensure that "Allow scripts to access OAuth token" is enabled as part of the a
 
 A: Build Administrators must be given "Contribute to pull requests" access. Check [this Stack Overflow answer](https://stackoverflow.com/a/57985733) for guidance on setting up permissions.
 
-### Bug Reports
-
-If you find a bug or unexpected behavior, please [open a bug report](https://github.com/tlaukkanen/azure-devops-ai-code-review/issues/new?assignees=&labels=bug&template=bug_report.md&title=).
-
-### Feature Requests
-
-If you have ideas for new features or enhancements, please [submit a feature request](https://github.com/tlaukkanen/azure-devops-ai-code-review/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=).
 
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
-
-If you would like to contribute to the development of this extension, please follow our contribution guidelines.
 
 Project was originally forked from [a1dancole/OpenAI-Code-Review](https://github.com/a1dancole/OpenAI-Code-Review).

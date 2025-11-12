@@ -9,7 +9,6 @@
     "clean": "rimraf dist"
   },
   "keywords": [],
-  "author": "Tommi Laukkanen",
   "license": "MIT",
   "dependencies": {
     "@azure/openai": "2.0.0-beta.2",

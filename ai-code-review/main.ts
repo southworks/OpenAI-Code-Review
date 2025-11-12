@@ -22,6 +22,7 @@ export class Main {
         }
 
         const endpointUrl = tl.getInput('azureOpenAiDeploymentEndpointUrl', true)!;
+        const deploymentName = tl.getInput('azureOpenAiDeploymentName', true)!;
         const apiKey = tl.getInput('azureOpenAiApiKey', true)!;
         const apiVersion = tl.getInput('azureOpenAiApiVersion', true)!;
         const fileExtensions = tl.getInput('fileExtensions', false);
@@ -37,7 +38,7 @@ export class Main {
             endpoint: endpointUrl,
             apiKey: apiKey,
             apiVersion: apiVersion,
-            deployment: 'gpt-4o-mini'
+            deployment: deploymentName
         });
 
         console.info('OpenAI client initialized. With base URL: ' + client.baseURL + ' , api version: ' + client.apiVersion + ' and deployment: ' + client.deploymentName);

@@ -99,18 +99,19 @@ export class PullRequest {
         }
     }
 
-    public async GetThreads(): Promise<never[]> {
+    public async GetThreads(): Promise<any[]> {
         let threadsEndpoint = `${this._collectionUri}${this._teamProjectId}/_apis/git/repositories/${this._repositoryName}/pullRequests/${this._pullRequestId}/threads?api-version=5.1`;
         let threadsResponse = await fetch(threadsEndpoint, {
             headers: { 'Authorization': `Bearer ${tl.getVariable('System.AccessToken')}`, 'Content-Type': 'application/json' },
             agent: this._httpsAgent
         });
 
-        if (threadsResponse.ok == false) {
-            tl.warning(`Failed to retrieve threads from url ${threadsEndpoint} the response was ${threadsResponse.statusText}`);
+        if (!threadsResponse.ok) {
+          tl.warning(`Failed to retrieve threads from url ${threadsEndpoint} the response was ${threadsResponse.statusText}`);
+          return [];
         }
 
-        let threads = await threadsResponse.json();
+        let threads: any = await threadsResponse.json();
         return threads.value.filter((thread: any) => thread.threadContext !== null);
     }
 
