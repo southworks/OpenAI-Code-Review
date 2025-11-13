@@ -10,6 +10,9 @@ Use your own Azure OpenAI service endpoints to provide pull request code reviews
 - **Faster Reviews:** Reduce the time spent on code reviews. Let Open AI handle the routine, allowing your team to focus on impactful work.
 - **Configurable and Customizable:** Tailor the extension to your needs with customizable settings. Specify the Open AI model, define file exclusions, and more.
 
+
+  ![](screenshots/Review.png)
+
 ## Setup the Devops extension
 
 ### Create publisher
