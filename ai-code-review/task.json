@@ -1,11 +1,10 @@
 {
     "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
     "id": "fe812f95-18a3-48ce-804d-5ac06b98c619",
-    "name": "SouthWorks-AICodeReview",
-    "friendlyName": "SouthWorks - AI Code Review",
+    "name": "AICodeReview",
+    "friendlyName": "AI Code Review",
     "description": "Complete a Code Review using Azure OpenAI services",
     "category": "Utility",
-    "author": "SouthWorks",
     "version": {
         "Major": 1,
         "Minor": 0,

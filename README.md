@@ -4,9 +4,7 @@
 
 ### Create publisher
 
-If you don't have a Visual Studio Marketplace publisher yet, create one by visiting the [publisher management page](https://marketplace.visualstudio.com/manage).
-
-![](screenshots/CreatePublisher.png)
+If you don't have a Visual Studio Marketplace publisher yet, follow this guide to [Create a Publisher](https://learn.microsoft.com/en-us/azure/devops/extend/publish/overview?view=azure-devops#create-a-publisher)
 
 ### Update task.json
 
@@ -54,22 +52,13 @@ npx tfx-cli extension create
 
 ## Publish the extension
 
-Once you have the `.vsix` package, go back to the [publisher management page](https://marketplace.visualstudio.com/manage)
+Once you have the `.vsix` package, you can follow the guides to [Publish](https://learn.microsoft.com/en-us/azure/devops/extend/publish/overview?view=azure-devops#publish-your-extension) and [Share](https://learn.microsoft.com/en-us/azure/devops/extend/publish/overview?view=azure-devops#share-your-extension) the extension.
 
-1.  Create a new extension
-      ![](screenshots/NewExtension.png)
-2.  Upload the package
-      ![](screenshots/UploadExtension.png)
-3.  Share the extension with your organization
-      ![](screenshots/SharePackage.png)
-      ![](screenshots/ShareWithOrg.png)
    
 ## Install the extension
 
 To use the extension in a pipeline you must install it from the organization settings.
-
-For [SouthWorks](https://dev.azure.com/southworks/_settings/extensions?tab=shared) 
-For other orgs, change the org name in the link: https://dev.azure.com/{ORG_NAME}/_settings/extensions?tab=shared
+Change the org name in the link: https://dev.azure.com/{ORG_NAME}/_settings/extensions?tab=shared
 
 1. Select Shared Extensions
     ![](screenshots/SharedExtensions.png)
