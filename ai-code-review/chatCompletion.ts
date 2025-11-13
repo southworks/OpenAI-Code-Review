@@ -48,42 +48,56 @@ export class ChatCompletion {
 `}
     }
 
-    public async PerformCodeReview(diff: string, fileName: string): 
-            Promise<{response: string, promptTokens: number, completionTokens: number}> {
+  public async PerformCodeReview(diff: string, fileName: string):
+    Promise<{ response: string, promptTokens: number, completionTokens: number }> {
 
-        if (!this.doesMessageExceedTokenLimit(diff + this.systemMessage, this._maxTokens)) {
-
-            let openAi = await this._openAi.chat.completions.create({
-                messages: [
-                    {
-                        role: 'system',
-                        content: this.systemMessage
-                    },
-                    {
-                        role: 'user',
-                        content: diff
-                    },
-                ],
-                model: ''
-            });
-
-            let response = openAi.choices;
-            const tokenUsage = openAi.usage;
-            const tokenUsageString = JSON.stringify(tokenUsage);
-            console.info(`Usage: ${tokenUsageString}`);
-
-            if (response.length > 0) {
-                return {
-                    response: response[0].message.content!,
-                    promptTokens: tokenUsage!.prompt_tokens,
-                    completionTokens: tokenUsage!.completion_tokens,
-                };
-            }
-        }
-
-        tl.warning(`Unable to process diff for ${fileName} as it exceeds token limits.`)
-        return {response: '', promptTokens: 0, completionTokens: 0};
+    const combinedMessage = diff + this.systemMessage;
+    // If message exceeds token limit, warn and return an empty result
+    if (this.doesMessageExceedTokenLimit(combinedMessage, this._maxTokens)) {
+      tl.warning(`Unable to process diff for ${fileName} as it exceeds token limits.`);
+      return { response: '', promptTokens: 0, completionTokens: 0 };
     }
+
+    try {
+      const openAi = await this._openAi.chat.completions.create({
+        messages: [
+          {
+            role: 'system',
+            content: this.systemMessage
+          },
+          {
+            role: 'user',
+            content: diff
+          },
+        ],
+        model: ''
+      });
+
+      const response = openAi.choices;
+      const tokenUsage = openAi.usage;
+      console.info(`Usage: ${JSON.stringify(tokenUsage)}`);
+
+      if (response && response.length > 0) {
+        return {
+          response: response[0].message.content ?? '',
+          promptTokens: tokenUsage?.prompt_tokens ?? 0,
+          completionTokens: tokenUsage?.completion_tokens ?? 0,
+        };
+      }
+
+      // No choices returned from the API
+      tl.warning(`Chat completion returned no choices for ${fileName}.`);
+      return { response: '', promptTokens: 0, completionTokens: 0 };
+    }
+    catch (error) {
+      const errorMsg = error instanceof Error ? error.stack || error.message : JSON.stringify(error);
+      const failMessage = `Error calling OpenAI chat completion for file ${fileName}: ${errorMsg}`;
+      tl.error(failMessage);
+      // Mark the pipeline task as failed and throw to stop further processing
+      tl.setResult(tl.TaskResult.Failed, failMessage);
+      throw new Error(failMessage);
+    }
+  }
 
     private doesMessageExceedTokenLimit(message: string, tokenLimit: number): boolean {
         let tokens = encode(message);

@@ -1,15 +1,14 @@
 {
     "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
-    "id": "abd1f390-3d55-4eb2-af0a-273c5dbf256f",
+    "id": "fe812f95-18a3-48ce-804d-5ac06b98c619",
     "name": "AICodeReview",
     "friendlyName": "AI Code Review",
     "description": "Complete a Code Review using Azure OpenAI services",
     "category": "Utility",
-    "author": "Tommi Laukkanen",
     "version": {
         "Major": 1,
         "Minor": 0,
-        "Patch": 20
+        "Patch": 4
     },
     "instanceNameFormat": "AI Code Review $(message)",
     "inputs": [
@@ -20,6 +19,14 @@
             "defaultValue": "",
             "required": true,
             "helpMarkDown": "URL to your Azure OpenAI deployment endpoint."
+        },
+        {
+            "name": "azureOpenAiDeploymentName",
+            "type": "string",
+            "label": "Azure OpenAI deployment name",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Name of your Azure OpenAI deployment."
         },
         {
             "name": "azureOpenAiApiKey",
@@ -122,10 +129,7 @@
         }
     ],
     "execution": {
-        "Node10": {
-            "target": "dist/main.js"
-        },
-        "Node16": {
+        "Node20_1": {
             "target": "dist/main.js"
         }
     }

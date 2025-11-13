@@ -1,17 +1,13 @@
 {
   "manifestVersion": 1,
   "id": "ai-code-review",
-  "publisher": "TommiLaukkanen",
-  "version": "1.0.20",
+  "publisher": "Your-publisher-id",
+  "version": "1.0.4",
   "name": "AI Code Review Task",
   "description": "AI code review extension to review pull request changes using your own Azure OpenAI endpoints",
   "public": false,
   "categories": ["Azure Repos", "Azure Pipelines"],
   "tags": ["ai", "openai", "gpt", "llm", "gpt4", "copilot", "code", "review", "chatgpt"],
-  "repository": {
-    "type": "git",
-    "uri": "https://github.com/tlaukkanen/azure-devops-ai-code-review"
-  },
   "icons": {
     "default": "images/icon-128x128.png"
   },
@@ -22,7 +18,7 @@
   ],
   "contributions": [
     {
-      "id": "ai-code-review",
+      "id": "AICodeReview",
       "type": "ms.vss-distributed-task.task",
       "targets": ["ms.vss-distributed-task.tasks"],
       "properties": {
@@ -43,25 +39,8 @@
       "path": "ai-code-review"
     },
     {
-      "path": "screenshots",
-      "addressable": true
-    },
-    {
       "path": "images",
       "addressable": true
-    }
-  ],
-  "links": {
-    "repository": {
-      "uri": "https://github.com/tlaukkanen/azure-devops-ai-code-review"
-    }
-  },
-  "screenshots": [
-    {
-      "path": "screenshots/review1.jpg"
-    },
-    {
-      "path": "screenshots/screen1.png"
     }
   ]
 }
