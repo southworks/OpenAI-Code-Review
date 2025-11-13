@@ -1,5 +1,15 @@
 # AI Code Review DevOps Extension
 
+## Supercharge Your Code Reviews with Azure Open AI Services
+
+Use your own Azure OpenAI service endpoints to provide pull request code reviews while keeping your code private.
+
+- **AI Powered Insights:** Optimized for latest LLM models like GPT-5-mini or GPT-4o-mini, which provides optimal high performance with small cost.
+- **Security and Privacy:** Use your own Azure OpenAI model deployment for reviews
+- **Automated Summaries:** Let AI summarise your pull request so it's easier for humans to follow. AI will also provide feedback for all changes related to bugs, performance, best practices etc.
+- **Faster Reviews:** Reduce the time spent on code reviews. Let Open AI handle the routine, allowing your team to focus on impactful work.
+- **Configurable and Customizable:** Tailor the extension to your needs with customizable settings. Specify the Open AI model, define file exclusions, and more.
+
 ## Setup the Devops extension
 
 ### Create publisher
