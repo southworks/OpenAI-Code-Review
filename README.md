@@ -76,9 +76,20 @@ Note: You need the Project Collection Administrator role to see the install opti
 #### Azure resources
 
 *   [Azure DevOps Account](https://dev.azure.com/)
-*   Azure OpenAI endpoint URI
-*   Azure OpenAI endpoint key
-*   Azure OpenAI deployment name
+*   [Create a AI Foundry Resource](https://learn.microsoft.com/en-us/azure/ai-services/multi-service-resource?pivots=azportal)
+*   [Create a AI Foundry Project](https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry)
+*   [Deploy a OpenAI model](https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/deploy-models-openai).(recomended gpt-5-mini)
+   
+
+
+* Enter to the Ai Foundry portal and list the model deployments
+![](screenshots/AzureAIDeployments.png)
+* Select your deployment
+* From the deployment details copy:
+  *   endpoint URI (red box)
+  *   endpoint key (yellow box)
+  *   deployment name (green box)
+  ![](screenshots/AzureAIDeploymentDetails.png)
 
 #### Pipeline settings
 
@@ -107,7 +118,7 @@ Note: You need the Project Collection Administrator role to see the install opti
     steps:
     - checkout: self
       persistCredentials: true
-    - task: SouthWorks-AICodeReview@1.0.4
+    - task: AICodeReview@1.0.4
       inputs:
         azureOpenAiDeploymentEndpointUrl: $(AzureOpenAiDeploymentEndpoint)
         azureOpenAiApiKey: $(AzureOpenAiDeploymentKey)
