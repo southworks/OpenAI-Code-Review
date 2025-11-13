@@ -164,7 +164,13 @@ Note: the `persistCredentials` step is required to make the OAuth token availabl
 ```
   ![](screenshots/AccessTokenError.png)
 
+### Bug Reports
 
+If you find a bug or unexpected behavior, please [open a bug report](https://github.com/a1dancole/azure-devops-ai-code-review/issues/new?assignees=&labels=bug&template=bug_report.md&title=).
+
+### Feature Requests
+
+If you have ideas for new features or enhancements, please [submit a feature request](https://github.com/a1dancole/azure-devops-ai-code-review/issues/new?assignees=&labels=enhancement&template=feature_request.md&title=).
 
 ## License
 
