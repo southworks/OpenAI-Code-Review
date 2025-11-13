@@ -1,48 +1,105 @@
 # AI Code Review DevOps Extension
 
-## Supercharge Your Code Reviews with Azure Open AI Services
+## Setup the Devops extension
 
-Use your own Azure OpenAI service endpoints to provide pull request code reviews while keeping your code private.
+### Create publisher
 
-- **AI Powered Insights:** Optimized for latest LLM models like GPT-4o-mini, which provides optimal high performance with small cost.
-- **Security and Privacy:** Use your own Azure OpenAI model deployment for reviews
-- **Automated Summaries:** Let AI summarise your pull request so it's easier for humans to follow. AI will also provide feedback for all changes related to bugs, performance, best practices etc.
-- **Easy to install:** A simple one-click installation from the [Azure DevOps Marketplace]([https://marketplace.visualstudio.com/azuredevops](https://marketplace.visualstudio.com/items?itemName=TommiLaukkanen.ai-code-review)) gets you up and running instantly. Configure to your pipeline as shown below.
-- **Faster Reviews:** Reduce the time spent on code reviews. Let Open AI handle the routine, allowing your team to focus on impactful work.
-- **Configurable and Customizable:** Tailor the extension to your needs with customizable settings. Specify the Open AI model, define file exclusions, and more.
+If you don't have a Visual Studio Marketplace publisher yet, create one by visiting the [publisher management page](https://marketplace.visualstudio.com/manage).
 
-![](images/ai-review-buddy-640.png)
+![](screenshots/CreatePublisher.png)
 
-## Sample review
+### Update task.json
 
-Click for larger version:
+Next, edit the `ai-code-review/task.json` file.
 
-[![sample review](screenshots/review1-thumbnail.jpg)](screenshots/review1.jpg)
+The task id must be unique. Generate one using PowerShell: `(New-Guid).Guid`
 
-## What does it cost?
+You can also change the task display name and adjust its version.
 
-The extension itself is free. The reviews will utilize your own Azure OpenAI services so it will depend on the model that you deploy. As of today October 2024 the GPT-4o-mini seems to be optimal for this purpose and is cheap to use - today price for input prompt was $0.15 per 1M tokens, output was $0.60 per 1M tokens. While completing many pull requests the price per code review ranges from ~$0.0002 to ~$0.002 per review - so if you have 1000 PRs per month it's a [price of coffee](https://www.buymeacoffee.com/tlaukkanen) 😉
+To learn more about the `task.json` format see the official [documentation](https://learn.microsoft.com/en-us/azure/devops/extend/develop/add-build-task?view=azure-devops#understanding-taskjson-components)
 
-You can set the token pricing on the task parameters and then you can see from your logs how much each of the reviews cost:
+### Install packaging tools
 
-![](images/cost-analysis.jpg)
+Install the Cross Platform Command Line Interface (tfx-cli):
 
-## Prerequisites
+```
+npm install -g tfx-cli
+```
 
-- [Azure DevOps Account](https://dev.azure.com/)
-- Azure OpenAI endpoint URI
-- Azure OpenAI endpoint key
-- Optional: Pricing for input and output tokens (check from [Azure OpenAI Pricing](https://azure.microsoft.com/en-us/pricing/details/cognitive-services/openai-service/#pricing))
+### Update vss-extension.json
 
-## Getting started
+Update the `vss-extension.json` file located in the repository root.
 
-1. Install the AI Code Review DevOps Extension from the Azure DevOps Marketplace.
-2. Add Open AI Code Review Task to Your Pipeline:
+The `publisher` property must match your publisher id.
 
-  ```yaml
+<table><tbody><tr><td>Property</td><td>Description</td></tr><tr><td><code>publisher</code></td><td>Your marketplace publisher identifier</td></tr><tr><td><code>contributions.id</code></td><td>Unique identifier within the extension</td></tr><tr><td><code>version</code></td><td>Must match the task version</td></tr></tbody></table>
+
+### Build the package
+
+#### Build the internal project
+
+```
+cd ai-code-review
+npm i
+npm run build
+```
+
+#### Build the extension package
+
+```
+# Go back to root with cd .. if necesary
+npm i
+npx tfx-cli extension create
+```
+
+## Publish the extension
+
+Once you have the `.vsix` package, go back to the [publisher management page](https://marketplace.visualstudio.com/manage)
+
+1.  Create a new extension
+      ![](screenshots/NewExtension.png)
+2.  Upload the package
+      ![](screenshots/UploadExtension.png)
+3.  Share the extension with your organization
+      ![](screenshots/SharePackage.png)
+      ![](screenshots/ShareWithOrg.png)
+   
+## Install the extension
+
+To use the extension in a pipeline you must install it from the organization settings.
+
+For [SouthWorks](https://dev.azure.com/southworks/_settings/extensions?tab=shared) 
+For other orgs, change the org name in the link: https://dev.azure.com/{ORG_NAME}/_settings/extensions?tab=shared
+
+1. Select Shared Extensions
+    ![](screenshots/SharedExtensions.png)
+2. Click Install
+    ![](screenshots/SharedExtensionDetails.png)
+3. Select the org and install the extension
+    ![](screenshots/InstallExtension.png)
+
+Note: You need the Project Collection Administrator role to see the install options.
+
+## Use the extension in your pipeline
+
+### Prerequisites
+
+#### Azure resources
+
+*   [Azure DevOps Account](https://dev.azure.com/)
+*   Azure OpenAI endpoint URI
+*   Azure OpenAI endpoint key
+*   Azure OpenAI deployment name
+
+#### Pipeline settings
+
+1. Create a basic `azure-pipeline.yaml` and [configure build validation](https://learn.microsoft.com/en-us/azure/devops/repos/git/branch-policies?view=azure-devops&tabs=browser#build-validation)
+2. Add the task to your `azure-pipeline.yaml` file. Example:
+```
   trigger:
     branches:
-      exclude:
+      include:
+        - master
         - '*'
 
   pr:
@@ -50,41 +107,50 @@ You can set the token pricing on the task parameters and then you can see from y
       include:
         - '*'
 
+  pool:
+    vmImage: 'ubuntu-latest'
+
   jobs:
   - job: CodeReview
+    displayName: 'Run AI Code Review'
     pool:
       vmImage: 'ubuntu-latest'
     steps:
-    - task: AICodeReview@1
+    - checkout: self
+      persistCredentials: true
+    - task: SouthWorks-AICodeReview@1.0.4
       inputs:
         azureOpenAiDeploymentEndpointUrl: $(AzureOpenAiDeploymentEndpoint)
         azureOpenAiApiKey: $(AzureOpenAiDeploymentKey)
-        azureOpenAiApiVersion: "2024-07-01-preview"
-        promptTokensPricePerMillionTokens: "0.15"
-        completionTokensPricePerMillionTokens: "0.6"
+        azureOpenAiDeploymentName: $(AzureOpenAiDeploymentName)
+        azureOpenAiApiVersion: '2024-04-01-preview'
+        promptTokensPricePerMillionTokens: '0.15'
+        completionTokensPricePerMillionTokens: '0.6'
         addCostToComments: true
         reviewBugs: true
         reviewPerformance: true
         reviewBestPractices: true
         reviewWholeDiffAtOnce: true
         maxTokens: 16384
-        fileExtensions: '.js,.ts,.css,.html,.py,.tf'
-        fileExcludes: 'file1.js,file2.py,secret.txt'
+        fileExtensions: '.js,.ts,.css,.html,.tf'
+        fileExcludes: ''
         additionalPrompts: |
           Fix variable naming, Ensure consistent indentation, Review error handling approach, Check for OWASP best practices
-  ```
+```
+Change the task name and version to match yours.
 
-3. If you do not already have Build Validation configured for your branch already add [Build validation](https://learn.microsoft.com/en-us/azure/devops/repos/git/branch-policies?view=azure-devops&tabs=browser#build-validation) to your branch policy to trigger the code review when a Pull Request is created
+3. Add the pipeline variables `AzureOpenAiDeploymentEndpoint`, `AzureOpenAiDeploymentKey` and `AzureOpenAiDeploymentName`.
+    ![](screenshots/PipelineVariables.png)
+4. Grant permission to allow comments on PRs
+    ![](screenshots/Permissions.png)
 
-## FAQ
+Note: the `persistCredentials` step is required to make the OAuth token available to the task:
+```
+- checkout: self
+  persistCredentials: true
+```
+  ![](screenshots/AccessTokenError.png)
 
-### Q: What agent job settings are required?
-
-A: Ensure that "Allow scripts to access OAuth token" is enabled as part of the agent job. Follow the [documentation](https://learn.microsoft.com/en-us/azure/devops/pipelines/build/options?view=azure-devops#allow-scripts-to-access-the-oauth-token) for more details.
-
-### Q: What permissions are required for Build Administrators?
-
-A: Build Administrators must be given "Contribute to pull requests" access. Check [this Stack Overflow answer](https://stackoverflow.com/a/57985733) for guidance on setting up permissions.
 
 
 ## License
