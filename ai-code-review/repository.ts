@@ -42,6 +42,56 @@ export class Repository {
         return filesToReview;
     }
 
+  public async GetADRFiles(path: string): Promise<string[]> {
+        // Ensure we have latest remote refs
+        await this._repository.fetch();
+
+        const defaultBranch = await this.GetDefaultBranch();
+
+        // List files under the given path on the default branch (including subfolders)
+        // `ls-tree -r --name-only origin/<branch> <path>` returns file paths under that path
+        let rawList: string;
+        try {
+            rawList = await this._repository.raw(['ls-tree', '-r', '--name-only', `origin/${defaultBranch}`, path]);
+        } catch (err) {
+            // If ls-tree with the path fails (for example path not found), return empty array
+            return [];
+        }
+
+        const files = rawList
+            .split('\n')
+            .map(s => s.trim())
+            .filter(s => s.length > 0 && s.toLowerCase().endsWith('.md'));
+
+        return files;
+  }
+      
+    private async GetDefaultBranch(): Promise<string> {
+        // Try to resolve origin/HEAD symbolic ref first (preferred)
+        try {
+            const symRef = await this._repository.raw(['symbolic-ref', 'refs/remotes/origin/HEAD']);
+            // result like: refs/remotes/origin/main
+            const parts = symRef.trim().split('/');
+            const branch = parts[parts.length - 1];
+            if (branch) return branch;
+        } catch (e) {
+            // ignore and try alternative
+        }
+
+        // Fallback: parse `git remote show origin` output
+        try {
+            const remoteShow = await this._repository.raw(['remote', 'show', 'origin']);
+            const match = remoteShow.match(/HEAD branch: (.+)/);
+            if (match && match[1]) return match[1].trim();
+        } catch (e) {
+            // ignore and fallback to defaults
+        }
+
+        // Final fallback: common default branch names
+        return 'main';
+    }
+      
+
     public async GetDiff(fileName: string): Promise<string> {
         let targetBranch = this.GetTargetBranch();
         

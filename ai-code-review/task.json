@@ -45,6 +45,21 @@
             "helpMarkDown": "Azure OpenAI API version."
         },
         {
+            "name": "adrFolderPath",
+            "type": "string",
+            "label": "ADR Folder Path",
+            "defaultValue": "/adrs",
+            "required": false,
+            "helpMarkDown": "Path to the folder containing Architecture Decision Records (ADRs)."
+        },
+        {
+            "name": "reviewADRs",
+            "type": "boolean",
+            "label": "Check with ADRs",
+            "defaultValue": true,
+            "helpMarkDown": "Specify whether to enable checking with Architecture Decision Records (ADRs) during the code review process.\n\n- Set to `true` to perform checks with ADRs.\n- Set to `false` to skip checks with ADRs.\n\nChecking with ADRs helps ensure that the code aligns with architectural decisions. Default value is `true`."
+        },
+        {
             "name": "reviewBugs",
             "type": "boolean",
             "label": "Check for bugs",
