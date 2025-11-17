@@ -78,6 +78,7 @@ export class Main {
     }
     this._chatCompletion = new ChatCompletion(
       client,
+      adrContent,
       tl.getBoolInput("reviewBugs", true),
       tl.getBoolInput("reviewPerformance", true),
       tl.getBoolInput("reviewBestPractices", true),

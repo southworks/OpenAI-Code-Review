@@ -1,25 +1,41 @@
-import tl = require('azure-pipelines-task-lib/task');
-import { encode } from 'gpt-tokenizer';
-import OpenAI, { AzureOpenAI } from 'openai';
+import tl = require("azure-pipelines-task-lib/task");
+import { encode } from "gpt-tokenizer";
+import OpenAI, { AzureOpenAI } from "openai";
 
 export class ChatCompletion {
-    private readonly systemMessage: string = '';
+  private readonly systemMessage: string = "";
 
-    constructor(
-        private _openAi: AzureOpenAI, 
-        checkForBugs: boolean = false,
-        checkForPerformance: boolean = false,
-        checkForBestPractices: boolean = false,
-        additionalPrompts: string[] = [],
-        private _maxTokens: number = 16384,
-        numberOfFilesToReview: number = 1
-     ) {
-        this.systemMessage = `Your task is to act as a code reviewer of a Pull Request:
-        ${numberOfFilesToReview > 1 ? '- Generate high-level summary and a technical walkthrough of all pull request changes' : null}
-        ${checkForBugs ? '- If there are any bugs, highlight them.' : null}
-        ${checkForPerformance ? '- If there are major performance problems, highlight them.' : null}
-        ${checkForBestPractices ? '- Provide details on missed use of best-practices.' : null}
-        ${additionalPrompts.length > 0 ? additionalPrompts.map(str => `- ${str}`).join('\n') : null}
+  constructor(
+    private _openAi: AzureOpenAI,
+    adrsContent: string[] = [],
+    checkForBugs: boolean = false,
+    checkForPerformance: boolean = false,
+    checkForBestPractices: boolean = false,
+    additionalPrompts: string[] = [],
+    private _maxTokens: number = 16384,
+    numberOfFilesToReview: number = 1
+  ) {
+    this.systemMessage = `Your task is to act as a code reviewer of a Pull Request:
+        ${
+          numberOfFilesToReview > 1
+            ? "- Generate high-level summary and a technical walkthrough of all pull request changes"
+            : null
+        }
+        ${
+          adrsContent.length > 0
+            ? `- Consider the following Architecture Decision Records (ADRs) in your review. Treat them as authoritative for this review::\n${adrsContent.join(
+                "\n"
+              )}`
+            : null
+        }
+        ${checkForBugs ? "- If there are any bugs, highlight them." : null}
+        ${checkForPerformance ? "- If there are major performance problems, highlight them." : null}
+        ${checkForBestPractices ? "- Provide details on missed use of best-practices." : null}
+        ${
+          additionalPrompts.length > 0
+            ? additionalPrompts.map((str) => `- ${str}`).join("\n")
+            : null
+        }
         - Do not highlight minor issues and nitpicks.
         - Only provide instructions for improvements.
         - If you have no specific instructions for a certain topic, then do not mention the topic at all.
@@ -31,9 +47,9 @@ export class ChatCompletion {
         - Use bullet points if you have multiple comments. Utilize emojis to make your comments more engaging.
         - Use the code block syntax for larger code snippets but do not wrap the whole response in a code block
         - Use inline code syntax for smaller inline code snippets
-`
-        if (numberOfFilesToReview > 1) {
-            this.systemMessage += `
+`;
+    if (numberOfFilesToReview > 1) {
+      this.systemMessage += `
         Create table that lists the files and their respective comments. For example:
 
         Summary of changes: ...
@@ -45,32 +61,34 @@ export class ChatCompletion {
         | file2.js | - comment2<br>- comment3 |
         | file3.py | No comments |
         | styles.css | - comment4 |
-`}
+`;
     }
+  }
 
-  public async PerformCodeReview(diff: string, fileName: string):
-    Promise<{ response: string, promptTokens: number, completionTokens: number }> {
-
+  public async PerformCodeReview(
+    diff: string,
+    fileName: string
+  ): Promise<{ response: string; promptTokens: number; completionTokens: number }> {
     const combinedMessage = diff + this.systemMessage;
     // If message exceeds token limit, warn and return an empty result
     if (this.doesMessageExceedTokenLimit(combinedMessage, this._maxTokens)) {
       tl.warning(`Unable to process diff for ${fileName} as it exceeds token limits.`);
-      return { response: '', promptTokens: 0, completionTokens: 0 };
+      return { response: "", promptTokens: 0, completionTokens: 0 };
     }
 
     try {
       const openAi = await this._openAi.chat.completions.create({
         messages: [
           {
-            role: 'system',
+            role: "system",
             content: this.systemMessage
           },
           {
-            role: 'user',
+            role: "user",
             content: diff
-          },
+          }
         ],
-        model: ''
+        model: ""
       });
 
       const response = openAi.choices;
@@ -79,18 +97,18 @@ export class ChatCompletion {
 
       if (response && response.length > 0) {
         return {
-          response: response[0].message.content ?? '',
+          response: response[0].message.content ?? "",
           promptTokens: tokenUsage?.prompt_tokens ?? 0,
-          completionTokens: tokenUsage?.completion_tokens ?? 0,
+          completionTokens: tokenUsage?.completion_tokens ?? 0
         };
       }
 
       // No choices returned from the API
       tl.warning(`Chat completion returned no choices for ${fileName}.`);
-      return { response: '', promptTokens: 0, completionTokens: 0 };
-    }
-    catch (error) {
-      const errorMsg = error instanceof Error ? error.stack || error.message : JSON.stringify(error);
+      return { response: "", promptTokens: 0, completionTokens: 0 };
+    } catch (error) {
+      const errorMsg =
+        error instanceof Error ? error.stack || error.message : JSON.stringify(error);
       const failMessage = `Error calling OpenAI chat completion for file ${fileName}: ${errorMsg}`;
       tl.error(failMessage);
       // Mark the pipeline task as failed and throw to stop further processing
@@ -99,9 +117,8 @@ export class ChatCompletion {
     }
   }
 
-    private doesMessageExceedTokenLimit(message: string, tokenLimit: number): boolean {
-        let tokens = encode(message);
-        return tokens.length > tokenLimit;
-    }
-
+  private doesMessageExceedTokenLimit(message: string, tokenLimit: number): boolean {
+    let tokens = encode(message);
+    return tokens.length > tokenLimit;
+  }
 }
