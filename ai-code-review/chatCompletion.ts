@@ -38,6 +38,8 @@ export class ChatCompletion {
         If an ADR is well addressed by the code changes, mark '✔️' in the 'ADR validation' column; otherwise, mark '❌'.\n
         If an ADR is not relevant to the changes, indicate 'N/A' in the 'ADR validation' column. And no need to provide comments or file diff related for such ADRs.\n
         If it is not possible to determine the relation between ADRs and code changes, respond with '⁉️ Unknown relation between ADRs and code changes.'\n
+        All rows should be related to one ADR only. Can be related to multiple ADRs. But can have multiple comments related to same ADR in the same row.\n
+        A row cant be related to a unkown or none ADR. A row is always related to an ADR, and have an ADR name. The ADR name  cant be empty, n/a or unkown\n
 
 
       
