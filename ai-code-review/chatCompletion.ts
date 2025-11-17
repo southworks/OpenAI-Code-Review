@@ -23,9 +23,25 @@ export class ChatCompletion {
         }
         ${
           adrsContent.length > 0
-            ? `- Consider the following Architecture Decision Records (ADRs) in your review. Treat them as authoritative for this review::\n${adrsContent.join(
-                "\n"
-              )}`
+            ? `- Consider the following Architecture Decision Records (ADRs) in your review. \n
+            - Create a summary of each ADR and how it impacts the code changes, in table format.\n
+            -ADRs review table example:\n
+        | ADR Name | Comments | Files diff related | ADR validation |
+        | --- | --- | --- | --- |
+        | 000-adr.md | - comment1 | index.js, app.css | ❌ |
+        | 001-adr1.md | - comment2<br>- comment3 | none| ✔️ |\n
+        The files diff related column should list ONLY the files in the pull request that relate to each ADR VALIDATION, no side effects.\n
+        The comments column should be related to each ADR Validation only.\n
+        The ADR validation column should indicate if the ADR is well addressed by the code changes with '✔️', '❌', 'N/A' or '⁉️ Unknown relation between ADRs and code changes.'\n
+        and provide your comments on how well the code changes align with each ADR.\n
+        If no ADRs are related to the code changes, indicate 'none' in the 'Files diff related' column.\n
+        If an ADR is well addressed by the code changes, mark '✔️' in the 'ADR validation' column; otherwise, mark '❌'.\n
+        If an ADR is not relevant to the changes, indicate 'N/A' in the 'ADR validation' column. And no need to provide comments or file diff related for such ADRs.\n
+        If it is not possible to determine the relation between ADRs and code changes, respond with '⁉️ Unknown relation between ADRs and code changes.'\n
+
+
+      
+      - Treat them as authoritative for this review:\n${adrsContent.join("\n")}`
             : null
         }
         ${checkForBugs ? "- If there are any bugs, highlight them." : null}

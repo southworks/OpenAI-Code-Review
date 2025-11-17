@@ -1,8 +1,8 @@
 {
   "manifestVersion": 1,
-  "id": "ai-code-review",
-  "publisher": "Your-publisher-id",
-  "version": "1.0.6",
+  "id": "swdevflow-code-review",
+  "publisher": "SWDevflow",
+  "version": "1.0.8",
   "name": "AI Code Review Task",
   "description": "AI code review extension to review pull request changes using your own Azure OpenAI endpoints",
   "public": false,
@@ -18,7 +18,7 @@
   ],
   "contributions": [
     {
-      "id": "AICodeReview",
+      "id": "swdevflow-code-review",
       "type": "ms.vss-distributed-task.task",
       "targets": ["ms.vss-distributed-task.tasks"],
       "properties": {
