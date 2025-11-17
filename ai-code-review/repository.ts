@@ -52,7 +52,12 @@ export class Repository {
 
   /**
    * Return the contents of all files under `path` on the specified branch.
-   * Each array element is the full file content as a string.
+   * With optional filtering of file paths and file contents.
+   * paths: array of paths or directories to search
+   * branch: branch name to get files from
+   * pathFilter: optional function to filter file paths
+   * contentFilter: optional function to filter file contents
+   * Each array element returned is the full file content as a string.
    */
   public async GetFilesFromBranch(
     paths: string[],
@@ -104,6 +109,7 @@ export class Repository {
           ) {
             continue;
           }
+          console.log(`Read file ${filePath} from origin/${branch}`);
           contents.push(content);
         } catch (e) {
           // If a file can't be read, log and continue
@@ -136,7 +142,7 @@ export class Repository {
       // ignore and fallback to defaults
     }
 
-    // Final fallback: common default branch names
+    // Final fallback: common default branch name
     return "main";
   }
 
