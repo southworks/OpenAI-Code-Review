@@ -30,8 +30,8 @@ export class ChatCompletion {
         | --- | --- | --- | --- |
         | 000-adr.md | - comment1 | index.js, app.css | ❌ |
         | 001-adr1.md | - comment2<br>- comment3 | none| ✔️ |\n
-        The files diff related column should list ONLY the files in the pull request that relate to each ADR VALIDATION, no side effects.\n
-        The comments column should be related to each ADR Validation only.\n
+        The files diff related column should list ONLY the files in the pull request that relate to each ADR VALIDATION SECTION, no side effects. List all files diff related that fail the ADR VALIDATION SECTION.Only-strict related to the ADR VALIDATION SECTION.\n
+        The comments column should be related to each ADR VALIDATION SECTION only. And not enumerate side effects, only ADR VALIDATION SECTION\n
         The ADR validation column should indicate if the ADR is well addressed by the code changes with '✔️', '❌', 'N/A' or '⁉️ Unknown relation between ADRs and code changes.'\n
         and provide your comments on how well the code changes align with each ADR.\n
         If no ADRs are related to the code changes, indicate 'none' in the 'Files diff related' column.\n
@@ -77,6 +77,9 @@ export class ChatCompletion {
         | file2.js | - comment2<br>- comment3 |
         | file3.py | No comments |
         | styles.css | - comment4 |
+
+        Mention 'No comments' for files without specific feedback.
+        Do a short mention of ADR validation issues if applicable.
 `;
     }
   }
