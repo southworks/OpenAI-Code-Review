@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - develop
-      - 123974-refactor-adr-retrieval
+      - 123813-inject-adrs-context
     paths:
       - 'ai-code-review/**'
       - '.github/workflows/pr-check.yml'
