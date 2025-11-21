@@ -3,6 +3,7 @@ import { AzureOpenAI } from "openai";
 import { ChatCompletion } from "./chatCompletion";
 import { Repository } from "./repository";
 import { PullRequest } from "./pullrequest";
+import { getAdrs } from "./ADR/getAdrs";
 import "@azure/openai/types";
 
 export class Main {
@@ -65,13 +66,7 @@ export class Main {
     this._repository = new Repository();
     this._pullRequest = new PullRequest();
     let filesToReview = await this._repository.GetChangedFiles(fileExtensions, filesToExclude);
-    const adrContent = reviewWithADRs
-      ? await this._repository.GetFilesFromBranch(
-          [adrsFolderPath],
-          await this._repository.GetDefaultBranch(),
-          (s) => s.toLowerCase().endsWith(".md")
-        )
-      : [];
+    const adrContent = await getAdrs(this._repository, reviewWithADRs, adrsFolderPath);
     console.info(`Found ${filesToReview.length} changed files to review.`);
     if (reviewWithADRs) {
       console.info(`Found ${adrContent.length} ADRs to use in the review.`);
