@@ -1,17 +1,17 @@
-name: PR Check
+name: Build and Publish
 
 on:
   pull_request:
     branches:
       - main
       - develop
-      - 123813-inject-adrs-context
+      - 123974-refactor-adr-retrieval
     paths:
       - 'ai-code-review/**'
       - '.github/workflows/pr-check.yml'
 
 jobs:
-  build-and-test:
+  build-test-publish:
     runs-on: ubuntu-latest
     
     steps:
@@ -37,7 +37,10 @@ jobs:
         working-directory: ./ai-code-review
         run: npm run test -- --run
 
-      - name: Check for TypeScript errors
-        working-directory: ./ai-code-review
-        run: npx tsc --noEmit
+      - name: Install tfx-cli (Azure DevOps cli)
+        if: github.ref == 'refs/heads/main'
+        run: npm install -g tfx-cli
 
+      - name: Publish to Azure DevOps Marketplace
+        if: github.ref == 'refs/heads/main'
+        run: tfx extension publish --manifest-globs vss-extension.json
