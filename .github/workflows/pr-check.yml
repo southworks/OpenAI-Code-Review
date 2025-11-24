@@ -1,0 +1,42 @@
+name: PR Check
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'ai-code-review/**'
+      - '.github/workflows/pr-check.yml'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: ai-code-review/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./ai-code-review
+        run: npm ci
+
+      - name: Build
+        working-directory: ./ai-code-review
+        run: npm run build
+
+      - name: Run tests
+        working-directory: ./ai-code-review
+        run: npm run test -- --run
+
+      - name: Check for TypeScript errors
+        working-directory: ./ai-code-review
+        run: npx tsc --noEmit
+
