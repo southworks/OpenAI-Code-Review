@@ -39,8 +39,16 @@ export class Repository {
     if (!this._remoteUrl) {
       throw new Error("Remote URL not specified for cloning.");
     }
-    const cloneOpts: string[] = ["--depth", "1"];
-    await this._repository.clone(this._remoteUrl, this._baseDir, cloneOpts as any);
+    const token = tl.getVariable("System.AccessToken");
+    const git = simpleGit();
+    // Build clone command: optionally inject http.extraheader with the pipeline access token
+    const args: string[] = [];
+    if (token && token.trim().length > 0) {
+      args.push("-c", `http.extraheader=AUTHORIZATION: bearer ${token}`);
+    }
+    args.push("clone", this._remoteUrl!, this._baseDir, "--depth", "1");
+
+    await git.raw(args);
   }
 
   public async GetChangedFiles(

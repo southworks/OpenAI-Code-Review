@@ -90,7 +90,7 @@ export class Main {
 
       let remoteRepo = new Repository(undefined, adrRemoteRepositoryUrl);
       try {
-        remoteRepo.Clone();
+        await remoteRepo.Clone();
         const remoteAdrs = await getAdrs(remoteRepo, adrRemoteFolderPath);
         adrContent = [...adrContent, ...remoteAdrs];
         console.info(`Found ${remoteAdrs.length} remote ADRs to use in the review.`);
