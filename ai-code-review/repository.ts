@@ -18,7 +18,11 @@ export class Repository {
    * other repositories).
    */
   constructor(baseDir?: string, remoteUrl?: string) {
-    this._baseDir = baseDir ? baseDir : path.join(os.tmpdir(), "repo-");
+    if (baseDir && baseDir.trim().length > 0) {
+      this._baseDir = baseDir;
+    } else {
+      this._baseDir = fs.mkdtempSync(path.join(os.tmpdir(), "repo-"));
+    }
     this._remoteUrl = remoteUrl;
 
     this.gitOptions = {
