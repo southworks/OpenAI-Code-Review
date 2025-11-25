@@ -1,19 +1,42 @@
 import * as tl from "azure-pipelines-task-lib/task";
 import { SimpleGit, SimpleGitOptions, simpleGit } from "simple-git";
+import * as fs from "fs";
+import * as os from "os";
+import * as path from "path";
 import binaryExtensions from "./binaryExtensions";
 
 export class Repository {
-  private gitOptions: Partial<SimpleGitOptions> = {
-    baseDir: `${tl.getVariable("System.DefaultWorkingDirectory")}`,
-    binary: "git"
-  };
+  private gitOptions: Partial<SimpleGitOptions>;
 
   private readonly _repository: SimpleGit;
+  private _remoteUrl?: string;
+  private _baseDir: string;
 
-  constructor() {
+  /**
+   * Create a Repository wrapper. Optionally provide a `baseDir` to point at
+   * a different local git working directory (useful for cloning/inspecting
+   * other repositories).
+   */
+  constructor(baseDir?: string, remoteUrl?: string) {
+    this._baseDir = baseDir ? baseDir : path.join(os.tmpdir(), "repo-");
+    this._remoteUrl = remoteUrl;
+
+    this.gitOptions = {
+      baseDir: this._baseDir,
+      binary: "git"
+    };
+
     this._repository = simpleGit(this.gitOptions);
     this._repository.addConfig("core.pager", "cat");
     this._repository.addConfig("core.quotepath", "false");
+  }
+
+  public async Clone() {
+    if (!this._remoteUrl) {
+      throw new Error("Remote URL not specified for cloning.");
+    }
+    const cloneOpts: string[] = ["--depth", "1"];
+    await this._repository.clone(this._remoteUrl, this._baseDir, cloneOpts as any);
   }
 
   public async GetChangedFiles(

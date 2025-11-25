@@ -2,6 +2,9 @@ import tl = require("azure-pipelines-task-lib/task");
 import { AzureOpenAI } from "openai";
 import { ChatCompletion } from "./chatCompletion";
 import { Repository } from "./repository";
+import * as fs from "fs";
+import * as os from "os";
+import * as path from "path";
 import { PullRequest } from "./pullrequest";
 import { getAdrs } from "./ADR/getAdrs";
 import "@azure/openai/types";
@@ -32,8 +35,12 @@ export class Main {
     const deploymentName = tl.getInput("azureOpenAiDeploymentName", true)!;
     const apiKey = tl.getInput("azureOpenAiApiKey", true)!;
     const apiVersion = tl.getInput("azureOpenAiApiVersion", true)!;
-    const adrsFolderPath = tl.getInput("adrsFolderPath", false) || "adrs";
-    const reviewWithADRs = tl.getBoolInput("reviewWithADRs", false);
+    const adrsLocalFolderPath = tl.getInput("adrsLocalFolderPath", false) || "adrs";
+    const reviewWithLocalADRs = tl.getBoolInput("reviewWithLocalADRs", false);
+    const adrRemoteFolderPath = tl.getInput("adrsRemoteFolderPath", false) || "adrs";
+    const reviewWithRemoteADRs = tl.getBoolInput("reviewWithRemoteADRs", false);
+    const adrRemoteRepositoryUrl = tl.getInput("adrRemoteRepository", false) || "";
+    let adrsFolderPath = adrsLocalFolderPath;
     const fileExtensions = tl.getInput("fileExtensions", false);
     const filesToExclude = tl.getInput("fileExcludes", false);
     const additionalPrompts = tl.getInput("additionalPrompts", false)?.split(",");
@@ -63,14 +70,36 @@ export class Main {
         client.deploymentName
     );
 
-    this._repository = new Repository();
+    this._repository = new Repository(`${tl.getVariable("System.DefaultWorkingDirectory")}`);
     this._pullRequest = new PullRequest();
     let filesToReview = await this._repository.GetChangedFiles(fileExtensions, filesToExclude);
-    const adrContent = await getAdrs(this._repository, reviewWithADRs, adrsFolderPath);
     console.info(`Found ${filesToReview.length} changed files to review.`);
-    if (reviewWithADRs) {
+    let adrContent: string[] = [];
+    if (reviewWithLocalADRs) {
+      adrContent = await getAdrs(this._repository, adrsLocalFolderPath);
       console.info(`Found ${adrContent.length} ADRs to use in the review.`);
     }
+    if (reviewWithRemoteADRs) {
+      if (adrRemoteRepositoryUrl.trim() === "") {
+        tl.setResult(
+          tl.TaskResult.Failed,
+          "ADR Remote Repository URL must be provided when 'Review with Remote ADRs' is enabled."
+        );
+        return;
+      }
+
+      let remoteRepo = new Repository(undefined, adrRemoteRepositoryUrl);
+      try {
+        remoteRepo.Clone();
+        const remoteAdrs = await getAdrs(remoteRepo, adrRemoteFolderPath);
+        adrContent = [...adrContent, ...remoteAdrs];
+        console.info(`Found ${remoteAdrs.length} remote ADRs to use in the review.`);
+      } catch (e) {
+        tl.setResult(tl.TaskResult.Failed, `Failed to read ADRs from remote repository: ${e}`);
+        return;
+      }
+    }
+
     this._chatCompletion = new ChatCompletion(
       client,
       adrContent,
