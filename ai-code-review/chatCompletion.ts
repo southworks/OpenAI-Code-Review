@@ -13,6 +13,7 @@ export class ChatCompletion {
     { pattern: /your\s+new\s+(role|task|purpose)/gi, replacement: "[REDACTED: role override attempt]" },
     { pattern: /forget\s+(everything|all|previous)/gi, replacement: "[REDACTED: memory manipulation attempt]" },
     { pattern: /END\s+OF\s+CODE.*BEGIN\s+INSTRUCTIONS/gis, replacement: "[REDACTED: context boundary manipulation]" },
+    { pattern: /<\/?code_diff>/gi, replacement: "[REDACTED: boundary tag]" },
   ];
 
   constructor(
