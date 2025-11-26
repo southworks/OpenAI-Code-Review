@@ -8,7 +8,7 @@
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 10
+    "Patch": 17
   },
   "instanceNameFormat": "AI Code Review $(message)",
   "inputs": [
@@ -66,6 +66,14 @@
       "defaultValue": "",
       "required": false,
       "helpMarkDown": "Remote repository URL to fetch Architecture Decision Records (ADRs) from."
+    },
+    {
+      "name": "adrRemoteRepositoryToken",
+      "type": "string",
+      "label": "ADRs Remote Repository Token",
+      "defaultValue": "",
+      "required": false,
+      "helpMarkDown": "Token to access the remote repository URL to fetch Architecture Decision Records (ADRs) from."
     },
     {
       "name": "adrsRemoteFolderPath",

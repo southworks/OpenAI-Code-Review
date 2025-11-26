@@ -39,16 +39,23 @@ export class Repository {
     if (!this._remoteUrl) {
       throw new Error("Remote URL not specified for cloning.");
     }
-    const token = tl.getVariable("System.AccessToken");
-    const git = simpleGit();
-    // Build clone command: optionally inject http.extraheader with the pipeline access token
-    const args: string[] = [];
-    if (token && token.trim().length > 0) {
-      args.push("-c", `http.extraheader=AUTHORIZATION: bearer ${token}`);
+    const token = tl.getInput("adrRemoteRepositoryToken");
+    if (!token || token.trim().length === 0) {
+      tl.setResult(
+        tl.TaskResult.Failed,
+        `No token or user provided for remote ADR repository access.`
+      );
+      throw new Error("No token or user provided for remote ADR repository access.");
     }
-    args.push("clone", this._remoteUrl!, this._baseDir, "--depth", "1");
 
-    await git.raw(args);
+    const authenticatedUrl = this._remoteUrl.replace(
+      /^(https?:\/\/)/,
+      `$1${encodeURIComponent(token)}@`
+    );
+
+    await this._repository.clone(authenticatedUrl, this._baseDir, ["--depth=1"]);
+
+    console.log("Clone complete.");
   }
 
   public async GetChangedFiles(
