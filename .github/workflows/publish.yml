@@ -3,11 +3,6 @@ name: Publish Azure DevOps Extension to Marketplace
 on:
   # INFO: Ideally this should also trigger from push to tagged version branch
   workflow_dispatch:
-  # TODO: Temporal trigger
-  push:
-    branches:
-      - '123817-prompt_injection_protection'
-      - '123985-cicd_publish'
 
 jobs:
   publish:
@@ -46,7 +41,7 @@ jobs:
         run: tfx extension create
 
       - name: Publish extension to Azure DevOps Marketplace
-        run: tfx extension publish -t ${{ secrets.VS_MARKETPLACE_TOKEN }} --share-with ${{ secrets.SHARE_VSTS_ACCOUNTS }}
+        run: tfx extension publish -t ${{ secrets.VS_MARKETPLACE_TOKEN }} --share-with ${{ secrets.SHARE_VSTS_ACCOUNTS }} --no-wait-validation
 
       # - name: Create GitHub Release
       #   if: success()
