@@ -8,7 +8,7 @@
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 10
+    "Patch": 21
   },
   "instanceNameFormat": "AI Code Review $(message)",
   "inputs": [
@@ -45,7 +45,7 @@
       "helpMarkDown": "Azure OpenAI API version."
     },
     {
-      "name": "adrsFolderPath",
+      "name": "adrsLocalFolderPath",
       "type": "string",
       "label": "ADRs Folder Path",
       "defaultValue": "/adrs",
@@ -53,11 +53,42 @@
       "helpMarkDown": "Path to the folder containing Architecture Decision Records (ADRs)."
     },
     {
-      "name": "reviewWithADRs",
+      "name": "reviewWithLocalADRs",
       "type": "boolean",
       "label": "Check with ADRs",
       "defaultValue": true,
       "helpMarkDown": "Specify whether to enable checking with Architecture Decision Records (ADRs) during the code review process.\n\n- Set to `true` to perform checks with ADRs.\n- Set to `false` to skip checks with ADRs.\n\nChecking with ADRs helps ensure that the code aligns with architectural decisions. Default value is `true`."
+    },
+    {
+      "name": "adrRemoteRepository",
+      "type": "string",
+      "label": "ADRs Remote Repository",
+      "defaultValue": "",
+      "required": false,
+      "helpMarkDown": "Remote repository URL to fetch Architecture Decision Records (ADRs) from."
+    },
+    {
+      "name": "adrRemoteRepositoryToken",
+      "type": "string",
+      "label": "ADRs Remote Repository Token",
+      "defaultValue": "",
+      "required": false,
+      "helpMarkDown": "Token to access the remote repository URL to fetch Architecture Decision Records (ADRs) from."
+    },
+    {
+      "name": "adrsRemoteFolderPath",
+      "type": "string",
+      "label": "ADRs Folder Path",
+      "defaultValue": "/adrs",
+      "required": false,
+      "helpMarkDown": "Path to the folder containing Architecture Decision Records (ADRs)."
+    },
+    {
+      "name": "reviewWithRemoteADRs",
+      "type": "boolean",
+      "label": "Check with ADRs",
+      "defaultValue": false,
+      "helpMarkDown": "Specify whether to enable checking with Architecture Decision Records (ADRs) during the code review process.\n\n- Set to `true` to perform checks with ADRs.\n- Set to `false` to skip checks with ADRs.\n\nChecking with ADRs helps ensure that the code aligns with architectural decisions. Default value is `false`."
     },
     {
       "name": "reviewBugs",
