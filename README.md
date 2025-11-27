@@ -4,14 +4,17 @@
 
 Use your own Azure OpenAI service endpoints to provide pull request code reviews while keeping your code private.
 
-- **AI Powered Insights:** Optimized for latest LLM models like GPT-5-mini or GPT-4o-mini, which provides optimal high performance with small cost.
-- **Security and Privacy:** Use your own Azure OpenAI model deployment for reviews
-- **Automated Summaries:** Let AI summarise your pull request so it's easier for humans to follow. AI will also provide feedback for all changes related to bugs, performance, best practices etc.
-- **Faster Reviews:** Reduce the time spent on code reviews. Let Open AI handle the routine, allowing your team to focus on impactful work.
-- **Configurable and Customizable:** Tailor the extension to your needs with customizable settings. Specify the Open AI model, define file exclusions, and more.
+**AI Powered Insights:** Optimized for latest LLM models like GPT-5-mini or GPT-4o-mini, which provides optimal high performance with small cost.
 
+**Security and Privacy:** Use your own Azure OpenAI model deployment for reviews
 
-  ![](screenshots/Review.png)
+**Automated Summaries:** Let AI summarise your pull request so it's easier for humans to follow. AI will also provide feedback for all changes related to bugs, performance, best practices etc.
+
+**Faster Reviews:** Reduce the time spent on code reviews. Let Open AI handle the routine, allowing your team to focus on impactful work.
+
+**Configurable and Customizable:** Tailor the extension to your needs with customizable settings. Specify the Open AI model, define file exclusions, and more.
+
+![](screenshots/Review.png)
 
 ## Setup the Devops extension
 
@@ -67,17 +70,16 @@ npx tfx-cli extension create
 
 Once you have the `.vsix` package, you can follow the guides to [Publish](https://learn.microsoft.com/en-us/azure/devops/extend/publish/overview?view=azure-devops#publish-your-extension) and [Share](https://learn.microsoft.com/en-us/azure/devops/extend/publish/overview?view=azure-devops#share-your-extension) the extension.
 
-   
 ## Install the extension
 
-To use the extension in a pipeline you must install it from the organization settings.
+To use the extension in a pipeline you must install it from the organization settings.  
 Change the org name in the link: https://dev.azure.com/{ORG_NAME}/_settings/extensions?tab=shared
 
-1. Select Shared Extensions
+1.  Select Shared Extensions  
     ![](screenshots/SharedExtensions.png)
-2. Click Install
+2.  Click Install  
     ![](screenshots/SharedExtensionDetails.png)
-3. Select the org and install the extension
+3.  Select the org and install the extension  
     ![](screenshots/InstallExtension.png)
 
 Note: You need the Project Collection Administrator role to see the install options.
@@ -88,26 +90,31 @@ Note: You need the Project Collection Administrator role to see the install opti
 
 #### Azure resources
 
-*   [Azure DevOps Account](https://dev.azure.com/)
-*   [Create a AI Foundry Resource](https://learn.microsoft.com/en-us/azure/ai-services/multi-service-resource?pivots=azportal)
-*   [Create a AI Foundry Project](https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry)
-*   [Deploy a OpenAI model](https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/deploy-models-openai).(recomended gpt-5-mini)
-   
+[Azure DevOps Account](https://dev.azure.com/)
 
+[Create a AI Foundry Resource](https://learn.microsoft.com/en-us/azure/ai-services/multi-service-resource?pivots=azportal)
 
-* Enter to the Ai Foundry portal and list the model deployments
+[Create a AI Foundry Project](https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/create-projects?tabs=ai-foundry)
+
+[Deploy a OpenAI model](https://learn.microsoft.com/en-us/azure/ai-foundry/how-to/deploy-models-openai).(recomended gpt-5-mini)
+
+Enter to the Ai Foundry portal and list the model deployments  
 ![](screenshots/AzureAIDeployments.png)
-* Select your deployment
-* From the deployment details copy:
-  *   endpoint URI (red box)
-  *   endpoint key (yellow box)
-  *   deployment name (green box)
+
+Select your deployment
+
+From the deployment details copy:
+
+- endpoint URI (red box)
+- endpoint key (yellow box)
+- deployment name (green box)  
   ![](screenshots/AzureAIDeploymentDetails.png)
 
 #### Pipeline settings
 
-1. Create a basic `azure-pipeline.yaml` and [configure build validation](https://learn.microsoft.com/en-us/azure/devops/repos/git/branch-policies?view=azure-devops&tabs=browser#build-validation)
-2. Add the task to your `azure-pipeline.yaml` file. Example:
+1.  Create a basic `azure-pipeline.yaml` and [configure build validation](https://learn.microsoft.com/en-us/azure/devops/repos/git/branch-policies?view=azure-devops&tabs=browser#build-validation)
+2.  Add the task to your `azure-pipeline.yaml` file. Example:
+
 ```
   trigger:
     branches:
@@ -137,6 +144,12 @@ Note: You need the Project Collection Administrator role to see the install opti
         azureOpenAiApiKey: $(AzureOpenAiDeploymentKey)
         azureOpenAiDeploymentName: $(AzureOpenAiDeploymentName)
         azureOpenAiApiVersion: '2024-04-01-preview'
+        adrsLocalFolderPath: 'adrs'
+        reviewWithLocalADRs: true
+        adrRemoteRepository: 'https://dev.azure.com/ORG/PROJECT/_git/REPO'
+        adrRemoteRepositoryToken: $(AdrRemoteRepositoryToken)
+        adrsRemoteFolderPath: 'adrs'
+        reviewWithRemoteADRs: true
         promptTokensPricePerMillionTokens: '0.15'
         completionTokensPricePerMillionTokens: '0.6'
         addCostToComments: true
@@ -150,19 +163,80 @@ Note: You need the Project Collection Administrator role to see the install opti
         additionalPrompts: |
           Fix variable naming, Ensure consistent indentation, Review error handling approach, Check for OWASP best practices
 ```
+
 Change the task name and version to match yours.
 
-3. Add the pipeline variables `AzureOpenAiDeploymentEndpoint`, `AzureOpenAiDeploymentKey` and `AzureOpenAiDeploymentName`.
+1.  Add the pipeline variables `AzureOpenAiDeploymentEndpoint`, `AzureOpenAiDeploymentKey` and `AzureOpenAiDeploymentName`. Note: if you are using remote ADR repo you also need to add the secret `AdrRemoteRepositoryToken`.  
     ![](screenshots/PipelineVariables.png)
-4. Grant permission to allow comments on PRs
+2.  Grant permission to allow comments on PRs  
     ![](screenshots/Permissions.png)
 
 Note: the `persistCredentials` step is required to make the OAuth token available to the task:
+
 ```
 - checkout: self
   persistCredentials: true
 ```
-  ![](screenshots/AccessTokenError.png)
+
+![](screenshots/AccessTokenError.png)
+
+### Using ADRs
+
+This task can include Architecture Decision Records (ADRs) from the current repository and/or from a remote repository. ADR files must be Markdown files (`*.md`). Configure ADR behavior using the task inputs below.
+
+- `adrsLocalFolderPath` (string, default: `adrs`): Path inside the current repository where ADR markdown files are stored.
+- `reviewWithLocalADRs` (boolean): When `true`, the task will collect ADRs from the local repository and include them in the AI review prompts.
+- `reviewWithRemoteADRs` (boolean): When `true`, the task will attempt to fetch ADRs from a remote repository in addition to the local ADRs.
+- `adrRemoteRepository` (string): Remote repository URL to clone when `reviewWithRemoteADRs` is enabled. Example: `https://dev.azure.com/ORG/PROJECT/_git/repo-name` or `git@github.com:org/repo.git`.
+- `adrRemoteRepositoryToken` (secret string): Token used to authenticate when cloning the remote repository. Required if `reviewWithRemoteADRs` is true.
+- `adrsRemoteFolderPath` (string, default: `adrs`): Path inside the remote repository where ADR markdown files are stored.
+
+How it works
+
+- If `reviewWithLocalADRs` is enabled the task reads ADRs from the local repository using the repository helper. Only `.md` files are included (case-insensitive).
+- If `reviewWithRemoteADRs` is enabled the task clones the remote repository into a temporary directory, reads ADRs from `adrsRemoteFolderPath`, merges them with local ADRs.
+
+#### ADRs format
+
+The ADR format is free-form; any structure is accepted as long as files are Markdown (`*.md`). The task always looks for files with the `.md` extension in the configured locations. To make AI reviews easier, we recommend each ADR includes a `Validation` section describing how to verify compliance with the decision.
+
+#### ADRs format - Template
+
+```
+# ADR {Number} - {Short Decision Title}
+
+## Date
+YYYY-MM-DD
+
+## Context
+Describe the situation that requires a decision.
+Include relevant technical, business, or team constraints.
+
+## Decision
+State clearly what was decided.
+
+## Options Considered
+1. {Option A}
+   - Advantages:
+   - Disadvantages:
+2. {Option B}
+   - Advantages:
+   - Disadvantages:
+3. {Option C}
+   - Advantages:
+   - Disadvantages:
+
+## Justification
+Explain why the selected option was chosen over the others.
+Highlight key trade-offs and reasoning.
+
+## Consequences
+Describe the impact of the decision, positive and negative.
+Note any follow-up decisions or work that this introduces.
+
+## Validation
+Describe how compliance with this decision will be verified.
+```
 
 ### Bug Reports
 

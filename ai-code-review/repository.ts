@@ -1,19 +1,61 @@
 import * as tl from "azure-pipelines-task-lib/task";
 import { SimpleGit, SimpleGitOptions, simpleGit } from "simple-git";
+import * as fs from "fs";
+import * as os from "os";
+import * as path from "path";
 import binaryExtensions from "./binaryExtensions";
 
 export class Repository {
-  private gitOptions: Partial<SimpleGitOptions> = {
-    baseDir: `${tl.getVariable("System.DefaultWorkingDirectory")}`,
-    binary: "git"
-  };
+  private gitOptions: Partial<SimpleGitOptions>;
 
   private readonly _repository: SimpleGit;
+  private _remoteUrl?: string;
+  private _baseDir: string;
 
-  constructor() {
+  /**
+   * Create a Repository wrapper. Optionally provide a `baseDir` to point at
+   * a different local git working directory (useful for cloning/inspecting
+   * other repositories).
+   */
+  constructor(baseDir?: string, remoteUrl?: string) {
+    if (baseDir && baseDir.trim().length > 0) {
+      this._baseDir = baseDir;
+    } else {
+      this._baseDir = fs.mkdtempSync(path.join(os.tmpdir(), "repo-"));
+    }
+    this._remoteUrl = remoteUrl;
+
+    this.gitOptions = {
+      baseDir: this._baseDir,
+      binary: "git"
+    };
+
     this._repository = simpleGit(this.gitOptions);
     this._repository.addConfig("core.pager", "cat");
     this._repository.addConfig("core.quotepath", "false");
+  }
+
+  public async Clone() {
+    if (!this._remoteUrl) {
+      throw new Error("Remote URL not specified for cloning.");
+    }
+    const token = tl.getInput("adrRemoteRepositoryToken");
+    if (!token || token.trim().length === 0) {
+      tl.setResult(
+        tl.TaskResult.Failed,
+        `No token or user provided for remote ADR repository access.`
+      );
+      throw new Error("No token or user provided for remote ADR repository access.");
+    }
+
+    const authenticatedUrl = this._remoteUrl.replace(
+      /^(https?:\/\/)/,
+      `$1${encodeURIComponent(token)}@`
+    );
+
+    await this._repository.clone(authenticatedUrl, this._baseDir, ["--depth=1"]);
+
+    console.log("Clone complete.");
   }
 
   public async GetChangedFiles(
