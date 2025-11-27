@@ -46,6 +46,7 @@
     },
     {
       "name": "adrsLocalFolderPath",
+      "name": "adrsLocalFolderPath",
       "type": "string",
       "label": "ADRs Folder Path",
       "defaultValue": "/adrs",
@@ -53,6 +54,7 @@
       "helpMarkDown": "Path to the folder containing Architecture Decision Records (ADRs)."
     },
     {
+      "name": "reviewWithLocalADRs",
       "name": "reviewWithLocalADRs",
       "type": "boolean",
       "label": "Check with ADRs",
