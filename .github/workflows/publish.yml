@@ -7,6 +7,7 @@ on:
   push:
     branches:
       - '123817-prompt_injection_protection'
+      - '123985-cicd_publish'
 
 jobs:
   publish:
