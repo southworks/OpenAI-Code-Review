@@ -3,6 +3,10 @@ name: Publish Azure DevOps Extension to Marketplace
 on:
   # INFO: Ideally this should also trigger from push to tagged version branch
   workflow_dispatch:
+  # TODO: Temporal trigger
+  push:
+    branches:
+      - '123817-prompt_injection_protection'
 
 jobs:
   publish:
