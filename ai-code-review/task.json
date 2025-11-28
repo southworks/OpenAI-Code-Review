@@ -8,7 +8,7 @@
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 17
+    "Patch": 21
   },
   "instanceNameFormat": "AI Code Review $(message)",
   "inputs": [
@@ -90,7 +90,6 @@
       "defaultValue": false,
       "helpMarkDown": "Specify whether to enable checking with Architecture Decision Records (ADRs) during the code review process.\n\n- Set to `true` to perform checks with ADRs.\n- Set to `false` to skip checks with ADRs.\n\nChecking with ADRs helps ensure that the code aligns with architectural decisions. Default value is `false`."
     },
-
     {
       "name": "reviewBugs",
       "type": "boolean",
