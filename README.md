@@ -138,7 +138,7 @@ From the deployment details copy:
     steps:
     - checkout: self
       persistCredentials: true
-    - task: AICodeReview@1.0.4
+    - task: swdevflow-code-review@1.0.4
       inputs:
         azureOpenAiDeploymentEndpointUrl: $(AzureOpenAiDeploymentEndpoint)
         azureOpenAiApiKey: $(AzureOpenAiDeploymentKey)

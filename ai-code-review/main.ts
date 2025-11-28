@@ -60,11 +60,11 @@ export class Main {
 
     console.info(
       "OpenAI client initialized. With base URL: " +
-        client.baseURL +
-        " , api version: " +
-        client.apiVersion +
-        " and deployment: " +
-        client.deploymentName
+      client.baseURL +
+      " , api version: " +
+      client.apiVersion +
+      " and deployment: " +
+      client.deploymentName
     );
 
     this._repository = new Repository(`${tl.getVariable("System.DefaultWorkingDirectory")}`);

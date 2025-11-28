@@ -1,14 +1,14 @@
 {
   "$schema": "https://raw.githubusercontent.com/Microsoft/azure-pipelines-task-lib/master/tasks.schema.json",
   "id": "fe812f95-18a3-48ce-804d-5ac06b98c619",
-  "name": "AICodeReview",
+  "name": "swdevflow-code-review",
   "friendlyName": "AI Code Review",
   "description": "Complete a Code Review using Azure OpenAI services",
   "category": "Utility",
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 21
+    "Patch": 25
   },
   "instanceNameFormat": "AI Code Review $(message)",
   "inputs": [
