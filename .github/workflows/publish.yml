@@ -1,0 +1,59 @@
+name: Publish Azure DevOps Extension to Marketplace
+
+on:
+  # INFO: Ideally this should also trigger from push to tagged version branch
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: ai-code-review/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./ai-code-review
+        run: npm ci
+
+      - name: Build
+        working-directory: ./ai-code-review
+        run: npm run build
+
+      - name: Install tfx-cli
+        run: npm install -g tfx-cli
+
+      - name: Get extension version
+        id: get_extension_version
+        run: |
+          VERSION=$(node -p "require('./vss-extension.json').version")
+          echo "Extension version is $VERSION"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create extension package (.vsix)
+        run: tfx extension create
+
+      - name: Publish extension to Azure DevOps Marketplace
+        run: tfx extension publish -t ${{ secrets.VS_MARKETPLACE_TOKEN }} --share-with ${{ secrets.SHARE_VSTS_ACCOUNTS }} --no-wait-validation
+
+      # - name: Create GitHub Release
+      #   if: success()
+      #   uses: actions/create-release@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     tag_name: v${{ steps.get_extension_version.outputs.version }}
+      #     release_name: Release v${{ steps.get_extension_version.outputs.version }}
+      #     body: |
+      #       ## New Release: v${{ steps.get_extension_version.outputs.version }}
+      #
+      #       This release includes the latest updates for the Azure DevOps extension.
+      #     draft: false
+      #     prerelease: false
