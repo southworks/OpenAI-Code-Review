@@ -59,7 +59,7 @@
       "defaultValue": "",
       "required": false,
       "helpMarkdown": "CSV with the specific file extensions used to identify ADRs (eg. `.adr.md,.txt`). If not specified any plain text file within the specified folder will be considered a valid ADR."
-    }
+    },
     {
       "name": "reviewWithLocalADRs",
       "type": "boolean",
