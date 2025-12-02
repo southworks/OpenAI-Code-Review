@@ -185,6 +185,4 @@ export class Main {
   }
 }
 
-
-
 Main.Main();
