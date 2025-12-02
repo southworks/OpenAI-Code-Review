@@ -53,6 +53,14 @@
       "helpMarkDown": "Path to the folder containing Architecture Decision Records (ADRs)."
     },
     {
+      "name": "adrsLocalFileExtensions",
+      "type": "string",
+      "label": "ADRs extension"
+      "defaultValue": "",
+      "required": false,
+      "helpMarkdown": "CSV with the specific file extensions used to identify ADRs (eg. `.adr.md,.txt`). If not specified any plain text file within the specified folder will be considered a valid ADR."
+    }
+    {
       "name": "reviewWithLocalADRs",
       "type": "boolean",
       "label": "Check with ADRs",
@@ -82,6 +90,14 @@
       "defaultValue": "/adrs",
       "required": false,
       "helpMarkDown": "Path to the folder containing Architecture Decision Records (ADRs)."
+    },
+    {
+      "name": "adrsRemoteFileExtensions",
+      "type": "string",
+      "label": "ADRs extension"
+      "defaultValue": "",
+      "required": false,
+      "helpMarkdown": "CSV with the specific file extensions used to identify ADRs (eg. `.adr.md,.txt`). If not specified any plain text file within the specified folder will be considered a valid ADR."
     },
     {
       "name": "reviewWithRemoteADRs",

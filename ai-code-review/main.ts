@@ -33,8 +33,10 @@ export class Main {
     const apiKey = tl.getInput("azureOpenAiApiKey", true)!;
     const apiVersion = tl.getInput("azureOpenAiApiVersion", true)!;
     const adrsLocalFolderPath = tl.getInput("adrsLocalFolderPath", false) || "adrs";
+    const adrsLocalFileExtensions = tl.getInput("adrsLocalFileExtensions") || "";
     const reviewWithLocalADRs = tl.getBoolInput("reviewWithLocalADRs", false);
     const adrRemoteFolderPath = tl.getInput("adrsRemoteFolderPath", false) || "adrs";
+    const adrRemoteFileExtensions = tl.getInput("adrsRemoteFileExtensions") || "";
     const reviewWithRemoteADRs = tl.getBoolInput("reviewWithRemoteADRs", false);
     const adrRemoteRepositoryUrl = tl.getInput("adrRemoteRepository", false) || "";
     let adrsFolderPath = adrsLocalFolderPath;
@@ -73,7 +75,8 @@ export class Main {
     console.info(`Found ${filesToReview.length} changed files to review.`);
     let adrContent: string[] = [];
     if (reviewWithLocalADRs) {
-      adrContent = await getAdrs(this._repository, adrsLocalFolderPath);
+      const adrsExtensions = this.getArrayFromCSV(adrsLocalFileExtensions);
+      adrContent = await getAdrs(this._repository, adrsLocalFolderPath, adrsExtensions);
       console.info(`Found ${adrContent.length} ADRs to use in the review.`);
     }
     if (reviewWithRemoteADRs) {
@@ -88,7 +91,8 @@ export class Main {
       let remoteRepo = new Repository(undefined, adrRemoteRepositoryUrl);
       try {
         await remoteRepo.Clone();
-        const remoteAdrs = await getAdrs(remoteRepo, adrRemoteFolderPath);
+        const adrsExtensions = this.getArrayFromCSV(adrRemoteFileExtensions);
+        const remoteAdrs = await getAdrs(remoteRepo, adrRemoteFolderPath, adrsExtensions);
         adrContent = [...adrContent, ...remoteAdrs];
         console.info(`Found ${remoteAdrs.length} remote ADRs to use in the review.`);
       } catch (e) {
@@ -172,6 +176,15 @@ export class Main {
     }
     tl.setResult(tl.TaskResult.Succeeded, "Pull Request reviewed.");
   }
+
+  static getArrayFromCSV(csv: string) {
+    if (!csv.trim()) {
+      return [];
+    }
+    return csv.split(',');
+  }
 }
+
+
 
 Main.Main();
