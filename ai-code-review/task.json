@@ -58,7 +58,7 @@
       "label": "ADRs extension local",
       "defaultValue": "",
       "required": false,
-      "helpMarkDown": "CSV with the specific file extensions used to identify ADRs (eg. `.adr.md,.txt`). If not specified any plain text file within the specified folder will be considered a valid ADR."
+      "helpMarkDown": "CSV with the specific file extensions used to identify ADRs (eg. `.adr,.md,.txt`). If not specified any plain text file within the specified folder will be considered a valid ADR."
     },
     {
       "name": "reviewWithLocalADRs",
@@ -97,7 +97,7 @@
       "label": "ADRs extension remote",
       "defaultValue": "",
       "required": false,
-      "helpMarkDown": "CSV with the specific file extensions used to identify ADRs (eg. `.adr.md,.txt`). If not specified any plain text file within the specified folder will be considered a valid ADR."
+      "helpMarkDown": "CSV with the specific file extensions used to identify ADRs (eg. `.adr,.md,.txt`). If not specified any plain text file within the specified folder will be considered a valid ADR."
     },
     {
       "name": "reviewWithRemoteADRs",
