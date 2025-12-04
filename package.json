@@ -1,6 +1,6 @@
 {
   "name": "swdevflow-code-review",
-  "version": "1.0.34",
+  "version": "1.0.35",
   "description": "AI code review extension for Azure DevOps using Azure OpenAI services",
   "main": "main.js",
   "scripts": {

@@ -113,8 +113,9 @@ export class Main {
       };
       const devOpsWikiService = new DevOpsWikiService(options);
       try {
-        const wikiAdrsPaths = await devOpsWikiService.getPages(`${adrsLocalWikiPath}`);
-        console.info(`Found ${wikiAdrsPaths.length} ADR pages in the wiki.`);
+        const wikiAdrsContent = await devOpsWikiService.getPages(`${adrsLocalWikiPath}`);
+        console.info(`Found ${wikiAdrsContent.length} ADR pages in the wiki.`);
+        adrContent = [...adrContent, ...wikiAdrsContent];
       } catch (e) {
         tl.setResult(tl.TaskResult.Failed, `Failed to read ADRs from DevOps Wiki: ${e}`);
         return;
