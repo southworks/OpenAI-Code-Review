@@ -42,6 +42,7 @@ export class Main {
     const adrRemoteRepositoryUrl = tl.getInput("adrRemoteRepository", false) || "";
     const reviewWithLocalWikiADRs = tl.getBoolInput("reviewWithLocalWikiADRs", false);
     const adrsLocalWikiPath = tl.getInput("adrsLocalWikiPath", false) || "/";
+    const adrsLocalWikiToken = tl.getInput("adrsLocalWikiToken", false) || "";
     const fileExtensions = tl.getInput("fileExtensions", false);
     const filesToExclude = tl.getInput("fileExcludes", false);
     const additionalPrompts = tl.getInput("additionalPrompts", false)?.split(",");
@@ -104,7 +105,13 @@ export class Main {
     }
 
     if (reviewWithLocalWikiADRs) {
-      const devOpsWikiService = new DevOpsWikiService();
+      const options: DevOpsWikiOptions = {
+        token:
+          adrsLocalWikiToken && adrsLocalWikiToken.trim().length > 0
+            ? adrsLocalWikiToken
+            : undefined
+      };
+      const devOpsWikiService = new DevOpsWikiService(options);
       try {
         const wikiAdrsPaths = await devOpsWikiService.getPages(`${adrsLocalWikiPath}`);
         console.info(`Found ${wikiAdrsPaths.length} ADR pages in the wiki.`);

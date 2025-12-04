@@ -8,7 +8,7 @@
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 33
+    "Patch": 34
   },
   "instanceNameFormat": "AI Code Review $(message)",
   "inputs": [
@@ -120,6 +120,15 @@
       "defaultValue": "/",
       "required": false,
       "helpMarkDown": "Path to the wiki pages containing Architecture Decision Records (ADRs)."
+    },
+
+    {
+      "name": "adrsLocalWikiToken",
+      "type": "string",
+      "label": "ADRs Wiki Token",
+      "defaultValue": "",
+      "required": false,
+      "helpMarkDown": "Token to access the wiki pages containing Architecture Decision Records (ADRs)."
     },
     {
       "name": "reviewBugs",

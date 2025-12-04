@@ -7,7 +7,6 @@ export interface DevOpsWikiOptions {
   projectId?: string; // Team Project Id or name
   wikiId?: string; // Wiki identifier (name or id). Defaults to repo name + ".wiki"
   token?: string; // Personal access token or System.AccessToken
-  acceptUntrusted?: boolean; // whether to allow self-signed certs
 }
 
 export class DevOpsWikiService {
@@ -16,6 +15,7 @@ export class DevOpsWikiService {
   private _wikiId: string;
   private _token: string;
   private _httpsAgent: Agent;
+  private _headers: HeadersInit;
 
   constructor(options?: DevOpsWikiOptions) {
     this._collectionUri =
@@ -29,12 +29,34 @@ export class DevOpsWikiService {
     this._wikiId = options?.wikiId || `${tl.getVariable("Build.Repository.Name")}.wiki` || "";
     this._token = options?.token || tl.getVariable("System.AccessToken") || "";
 
-    this._httpsAgent = new Agent({
-      rejectUnauthorized: options?.acceptUntrusted === true ? false : true
-    });
+    this._httpsAgent = new Agent();
+
+    this._headers = { "Content-Type": "application/json" };
+    if (this._token && this._token.trim().length > 0) {
+      this._headers["Authorization"] = `Bearer ${this._token}`;
+    } else {
+      throw new Error(
+        "A Personal Access Token or System.AccessToken is required to access the wiki."
+      );
+    }
   }
 
-  public async getPages(scopePath: string = "/"): Promise<string[]> {
+  public async getPages(path: string = "/"): Promise<string[]> {
+    const pagePathList: string[] = await this.getWikiPagePathList(path);
+
+    const content: string[] = [];
+    for (const pagePath of pagePathList) {
+      const pageContent = await this.getWikiPageContent(pagePath);
+      content.push(pageContent);
+    }
+    return content;
+  }
+
+  private getWikiRequestEndpoint(
+    scopePath: string,
+    includeContent: boolean,
+    recursionLevel: "none" | "oneLevel" | "full"
+  ): string {
     if (!this._collectionUri || !this._projectId || !this._wikiId) {
       throw new Error(
         "Collection URI, project id and wiki id are required (passed via options or pipeline variables)."
@@ -50,16 +72,19 @@ export class DevOpsWikiService {
     const encodedScope = encodeURIComponent(scopePath);
     const endpoint = `${base}${this._projectId}/_apis/wiki/wikis/${encodeURIComponent(
       this._wikiId
-    )}/pages?path=${encodedScope}&includeContent=${true}&recursionLevel=full&api-version=${apiVersion}`;
+    )}/pages?path=${encodedScope}&includeContent=${includeContent}&recursionLevel=${recursionLevel}&api-version=${apiVersion}`;
 
-    const headers: any = { "Content-Type": "application/json" };
-    if (this._token && this._token.trim().length > 0) {
-      headers["Authorization"] = `Bearer ${this._token}`;
-    }
+    return endpoint;
+  }
 
+  private async getWikiPagePathList(path: string): Promise<string[]> {
+    const endpoint = this.getWikiRequestEndpoint(path, false, "oneLevel");
     console.log("Fetching wiki pages from:", endpoint);
-
-    const res = await fetch(endpoint, { method: "GET", headers, agent: this._httpsAgent });
+    const res = await fetch(endpoint, {
+      method: "GET",
+      headers: this._headers,
+      agent: this._httpsAgent
+    });
     if (!res.ok) {
       const text = await res.text().catch(() => "");
       throw new Error(
@@ -67,24 +92,33 @@ export class DevOpsWikiService {
       );
     }
 
-    const body = await res.json();
-    console.log("DevOps Wiki API response:");
-    console.log(body);
-    const contents: string[] = [];
-    if (Array.isArray(body)) {
-      for (const p of body) {
-        if (typeof p.content === "string") contents.push(p.content);
-      }
-    } else if (
-      body &&
-      typeof body === "object" &&
-      Array.isArray((body as { value?: any[] }).value)
-    ) {
-      for (const p of (body as { value: any[] }).value) {
-        if (typeof p.content === "string") contents.push(p.content);
-      }
+    const data: any = await res.json();
+    console.log(`Retrieved wiki page data: ${JSON.stringify(data)}`);
+    const pagePaths: string[] =
+      data && data.subPages ? data.subPages.map((page: any) => page.path) : [];
+    return pagePaths;
+  }
+
+  private async getWikiPageContent(path: string): Promise<string> {
+    const endpoint = this.getWikiRequestEndpoint(path, true, "none");
+
+    console.log("Fetching wiki page content from:", endpoint);
+    const res = await fetch(endpoint, {
+      method: "GET",
+      headers: this._headers,
+      agent: this._httpsAgent
+    });
+    if (!res.ok) {
+      const text = await res.text().catch(() => "");
+      throw new Error(
+        `Failed to retrieve wiki page content from ${endpoint}: ${res.status} ${res.statusText} ${text}`
+      );
     }
-    return contents;
+
+    const data: any = await res.json();
+    console.log(`Retrieved wiki page content for ${path}, length: ${data.content.length}`);
+
+    return data.content || "";
   }
 }
 
