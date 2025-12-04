@@ -4,6 +4,7 @@ import { ChatCompletion } from "./chatCompletion";
 import { Repository } from "./repository";
 import { PullRequest } from "./pullrequest";
 import { getAdrs } from "./ADR/getAdrs";
+import { DevOpsWikiService, DevOpsWikiOptions } from "./devOpsWikiService";
 import "@azure/openai/types";
 
 export class Main {
@@ -39,7 +40,8 @@ export class Main {
     const adrRemoteFileExtensions = tl.getInput("adrsRemoteFileExtensions") || "";
     const reviewWithRemoteADRs = tl.getBoolInput("reviewWithRemoteADRs", false);
     const adrRemoteRepositoryUrl = tl.getInput("adrRemoteRepository", false) || "";
-    let adrsFolderPath = adrsLocalFolderPath;
+    const reviewWithLocalWikiADRs = tl.getBoolInput("reviewWithLocalWikiADRs", false);
+    const adrsLocalWikiPath = tl.getInput("adrsLocalWikiPath", false) || "/";
     const fileExtensions = tl.getInput("fileExtensions", false);
     const filesToExclude = tl.getInput("fileExcludes", false);
     const additionalPrompts = tl.getInput("additionalPrompts", false)?.split(",");
@@ -62,11 +64,11 @@ export class Main {
 
     console.info(
       "OpenAI client initialized. With base URL: " +
-      client.baseURL +
-      " , api version: " +
-      client.apiVersion +
-      " and deployment: " +
-      client.deploymentName
+        client.baseURL +
+        " , api version: " +
+        client.apiVersion +
+        " and deployment: " +
+        client.deploymentName
     );
 
     this._repository = new Repository(`${tl.getVariable("System.DefaultWorkingDirectory")}`);
@@ -97,6 +99,17 @@ export class Main {
         console.info(`Found ${remoteAdrs.length} remote ADRs to use in the review.`);
       } catch (e) {
         tl.setResult(tl.TaskResult.Failed, `Failed to read ADRs from remote repository: ${e}`);
+        return;
+      }
+    }
+
+    if (reviewWithLocalWikiADRs) {
+      const devOpsWikiService = new DevOpsWikiService();
+      try {
+        const wikiAdrsPaths = await devOpsWikiService.getPages(`${adrsLocalWikiPath}`);
+        console.info(`Found ${wikiAdrsPaths.length} ADR pages in the wiki.`);
+      } catch (e) {
+        tl.setResult(tl.TaskResult.Failed, `Failed to read ADRs from DevOps Wiki: ${e}`);
         return;
       }
     }
@@ -181,7 +194,7 @@ export class Main {
     if (!csv.trim()) {
       return [];
     }
-    return csv.split(',');
+    return csv.split(",");
   }
 }
 

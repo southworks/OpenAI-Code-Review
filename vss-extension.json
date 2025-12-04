@@ -2,25 +2,12 @@
   "manifestVersion": 1,
   "id": "swdevflow-code-review",
   "publisher": "SWDevflow",
-  "version": "1.0.29",
+  "version": "1.0.33",
   "name": "AI Code Review Task",
   "description": "AI code review extension to review pull request changes using your own Azure OpenAI endpoints",
   "public": false,
-  "categories": [
-    "Azure Repos",
-    "Azure Pipelines"
-  ],
-  "tags": [
-    "ai",
-    "openai",
-    "gpt",
-    "llm",
-    "gpt4",
-    "copilot",
-    "code",
-    "review",
-    "chatgpt"
-  ],
+  "categories": ["Azure Repos", "Azure Pipelines"],
+  "tags": ["ai", "openai", "gpt", "llm", "gpt4", "copilot", "code", "review", "chatgpt"],
   "icons": {
     "default": "images/icon-128x128.png"
   },
@@ -33,9 +20,7 @@
     {
       "id": "swdevflow-code-review",
       "type": "ms.vss-distributed-task.task",
-      "targets": [
-        "ms.vss-distributed-task.tasks"
-      ],
+      "targets": ["ms.vss-distributed-task.tasks"],
       "properties": {
         "name": "ai-code-review"
       }
