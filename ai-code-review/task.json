@@ -8,7 +8,7 @@
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 29
+    "Patch": 36
   },
   "instanceNameFormat": "AI Code Review $(message)",
   "inputs": [
@@ -105,6 +105,30 @@
       "label": "Check with ADRs",
       "defaultValue": false,
       "helpMarkDown": "Specify whether to enable checking with Architecture Decision Records (ADRs) during the code review process.\n\n- Set to `true` to perform checks with ADRs.\n- Set to `false` to skip checks with ADRs.\n\nChecking with ADRs helps ensure that the code aligns with architectural decisions. Default value is `false`."
+    },
+    {
+      "name": "reviewWithLocalWikiADRs",
+      "type": "boolean",
+      "label": "Check with ADRs",
+      "defaultValue": false,
+      "helpMarkDown": "Specify whether to enable checking with Architecture Decision Records (ADRs) during the code review process.\n\n- Set to `true` to perform checks with ADRs.\n- Set to `false` to skip checks with ADRs.\n\nChecking with ADRs helps ensure that the code aligns with architectural decisions. Default value is `false`."
+    },
+    {
+      "name": "adrsLocalWikiPath",
+      "type": "string",
+      "label": "ADRs Wiki Path",
+      "defaultValue": "/",
+      "required": false,
+      "helpMarkDown": "Path to the wiki pages containing Architecture Decision Records (ADRs)."
+    },
+
+    {
+      "name": "adrsLocalWikiToken",
+      "type": "string",
+      "label": "ADRs Wiki Token",
+      "defaultValue": "",
+      "required": false,
+      "helpMarkDown": "Token to access the wiki pages containing Architecture Decision Records (ADRs)."
     },
     {
       "name": "reviewBugs",

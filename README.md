@@ -187,7 +187,7 @@ This task can include Architecture Decision Records (ADRs) from the current repo
 - `adrsLocalFolderPath` (string, default: `adrs`): Path inside the current repository where ADR markdown files are stored.
 - `reviewWithLocalADRs` (boolean): When `true`, the task will collect ADRs from the local repository and include them in the AI review prompts.
 - `reviewWithRemoteADRs` (boolean): When `true`, the task will attempt to fetch ADRs from a remote repository in addition to the local ADRs.
-- `adrRemoteRepository` (string): Remote repository URL to clone when `reviewWithRemoteADRs` is enabled. Example: `https://dev.azure.com/ORG/PROJECT/_git/repo-name` or `git@github.com:org/repo.git`.
+- `adrRemoteRepository` (string): Remote repository URL to clone when `reviewWithRemoteADRs` is enabled. Example: `https://dev.azure.com/ORG/PROJECT/_git/repo-name`
 - `adrRemoteRepositoryToken` (secret string): Token used to authenticate when cloning the remote repository. Required if `reviewWithRemoteADRs` is true.
 - `adrsRemoteFolderPath` (string, default: `adrs`): Path inside the remote repository where ADR markdown files are stored.
 
