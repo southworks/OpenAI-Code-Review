@@ -65,7 +65,7 @@ export class ChatCompletion {
           adrsContent.length > 0
             ? `- Consider the following Architecture Decision Records (ADRs) in your review. \n
             - Create a summary of each ADR and how it impacts the code changes, in table format.\n
-            - You ALWAYS have to provide an ADR review table even if there are no comments related to ADRs.\n
+            - You ALWAYS have to provide an ADR REVIEW TABLE even if there are no comments related to ADRs, without exceptions.\n
             -ADRs review table example:\n
         | ADR Name | Comments | Files diff related | ADR validation |
         | --- | --- | --- | --- |
@@ -81,6 +81,8 @@ export class ChatCompletion {
         If it is not possible to determine the relation between ADRs and code changes, respond with '⁉️ Unknown relation between ADRs and code changes.'\n
         All rows should be related to one ADR only. Cant be related to multiple ADRs. But can have multiple comments related to same ADR in the same row.\n
         A row cant be related to a unkown or none ADR. A row is always related to an ADR, and have an ADR name. The ADR name  cant be empty, n/a or unkown\n
+        The ADR REVIEW TABLE is MANDATORY in every review, no matter what.\n
+        ALL ADRs provided must be included in the ADR REVIEW TABLE,excluding ONLY the templates used to create ADRs.\n
 
 
       
