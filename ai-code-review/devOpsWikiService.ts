@@ -6,7 +6,7 @@ export interface DevOpsWikiOptions {
   collectionUri?: string; // e.g. https://dev.azure.com/{organization}/
   projectId?: string; // Team Project Id or name
   wikiId?: string; // Wiki identifier (name or id). Defaults to repo name + ".wiki"
-  token?: string; // Personal access token or System.AccessToken
+  token: string; // Personal access token
 }
 
 export class DevOpsWikiService {
@@ -17,7 +17,7 @@ export class DevOpsWikiService {
   private _httpsAgent: Agent;
   private _headers: HeadersInit;
 
-  constructor(options?: DevOpsWikiOptions) {
+  constructor(options: DevOpsWikiOptions) {
     this._collectionUri =
       options?.collectionUri || tl.getVariable("System.TeamFoundationCollectionUri") || "";
     this._projectId =
