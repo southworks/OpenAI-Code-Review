@@ -3,8 +3,7 @@ import { AzureOpenAI } from "openai";
 import { ChatCompletion } from "./chatCompletion";
 import { Repository } from "./repository";
 import { PullRequest } from "./pullrequest";
-import { getAdrs } from "./ADR/getAdrs";
-import { DevOpsWikiService, DevOpsWikiOptions } from "./devOpsWikiService";
+import { getAllAdrs } from "./ADR/getAdrs";
 import "@azure/openai/types";
 
 export class Main {
@@ -33,16 +32,7 @@ export class Main {
     const deploymentName = tl.getInput("azureOpenAiDeploymentName", true)!;
     const apiKey = tl.getInput("azureOpenAiApiKey", true)!;
     const apiVersion = tl.getInput("azureOpenAiApiVersion", true)!;
-    const adrsLocalFolderPath = tl.getInput("adrsLocalFolderPath", false) || "adrs";
-    const adrsLocalFileExtensions = tl.getInput("adrsLocalFileExtensions") || "";
-    const reviewWithLocalADRs = tl.getBoolInput("reviewWithLocalADRs", false);
-    const adrRemoteFolderPath = tl.getInput("adrsRemoteFolderPath", false) || "adrs";
-    const adrRemoteFileExtensions = tl.getInput("adrsRemoteFileExtensions") || "";
-    const reviewWithRemoteADRs = tl.getBoolInput("reviewWithRemoteADRs", false);
-    const adrRemoteRepositoryUrl = tl.getInput("adrRemoteRepository", false) || "";
-    const reviewWithLocalWikiADRs = tl.getBoolInput("reviewWithLocalWikiADRs", false);
-    const adrsLocalWikiPath = tl.getInput("adrsLocalWikiPath", false) || "/";
-    const adrsLocalWikiToken = tl.getInput("adrsLocalWikiToken", false) || "";
+
     const fileExtensions = tl.getInput("fileExtensions", false);
     const filesToExclude = tl.getInput("fileExcludes", false);
     const additionalPrompts = tl.getInput("additionalPrompts", false)?.split(",");
@@ -76,55 +66,12 @@ export class Main {
     this._pullRequest = new PullRequest();
     let filesToReview = await this._repository.GetChangedFiles(fileExtensions, filesToExclude);
     console.info(`Found ${filesToReview.length} changed files to review.`);
-    let adrContent: string[] = [];
-    if (reviewWithLocalADRs) {
-      const adrsExtensions = this.getArrayFromCSV(adrsLocalFileExtensions);
-      adrContent = await getAdrs(this._repository, adrsLocalFolderPath, adrsExtensions);
-      console.info(`Found ${adrContent.length} ADRs to use in the review.`);
-    }
-    if (reviewWithRemoteADRs) {
-      if (adrRemoteRepositoryUrl.trim() === "") {
-        tl.setResult(
-          tl.TaskResult.Failed,
-          "ADR Remote Repository URL must be provided when 'Review with Remote ADRs' is enabled."
-        );
-        return;
-      }
 
-      let remoteRepo = new Repository(undefined, adrRemoteRepositoryUrl);
-      try {
-        await remoteRepo.Clone();
-        const adrsExtensions = this.getArrayFromCSV(adrRemoteFileExtensions);
-        const remoteAdrs = await getAdrs(remoteRepo, adrRemoteFolderPath, adrsExtensions);
-        adrContent = [...adrContent, ...remoteAdrs];
-        console.info(`Found ${remoteAdrs.length} remote ADRs to use in the review.`);
-      } catch (e) {
-        tl.setResult(tl.TaskResult.Failed, `Failed to read ADRs from remote repository: ${e}`);
-        return;
-      }
-    }
-
-    if (reviewWithLocalWikiADRs) {
-      const options: DevOpsWikiOptions = {
-        token:
-          adrsLocalWikiToken && adrsLocalWikiToken.trim().length > 0
-            ? adrsLocalWikiToken
-            : undefined
-      };
-      const devOpsWikiService = new DevOpsWikiService(options);
-      try {
-        const wikiAdrsContent = await devOpsWikiService.getPages(`${adrsLocalWikiPath}`);
-        console.info(`Found ${wikiAdrsContent.length} ADR pages in the wiki.`);
-        adrContent = [...adrContent, ...wikiAdrsContent];
-      } catch (e) {
-        tl.setResult(tl.TaskResult.Failed, `Failed to read ADRs from DevOps Wiki: ${e}`);
-        return;
-      }
-    }
+    const adrsContent = await getAllAdrs(this._repository);
 
     this._chatCompletion = new ChatCompletion(
       client,
-      adrContent,
+      adrsContent,
       tl.getBoolInput("reviewBugs", true),
       tl.getBoolInput("reviewPerformance", true),
       tl.getBoolInput("reviewBestPractices", true),
@@ -196,13 +143,6 @@ export class Main {
       console.info(`💰 Total Cost              : ${totalCostString} $`);
     }
     tl.setResult(tl.TaskResult.Succeeded, "Pull Request reviewed.");
-  }
-
-  static getArrayFromCSV(csv: string) {
-    if (!csv.trim()) {
-      return [];
-    }
-    return csv.split(",");
   }
 }
 

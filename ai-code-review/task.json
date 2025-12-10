@@ -8,7 +8,7 @@
   "version": {
     "Major": 1,
     "Minor": 0,
-    "Patch": 36
+    "Patch": 39
   },
   "instanceNameFormat": "AI Code Review $(message)",
   "inputs": [
@@ -121,9 +121,71 @@
       "required": false,
       "helpMarkDown": "Path to the wiki pages containing Architecture Decision Records (ADRs)."
     },
-
+    {
+      "name": "adrsLocalWikiId",
+      "type": "string",
+      "label": "ADRs Wiki ID",
+      "defaultValue": "",
+      "required": false,
+      "helpMarkDown": "ID of the wiki pages containing Architecture Decision Records (ADRs)."
+    },
+    {
+      "name": "adrsLocalProjectId",
+      "type": "string",
+      "label": "ADRs Wiki Project ID",
+      "defaultValue": "",
+      "required": false,
+      "helpMarkDown": "Project ID of the wiki pages containing Architecture Decision Records (ADRs)."
+    },
     {
       "name": "adrsLocalWikiToken",
+      "type": "string",
+      "label": "ADRs Wiki Token",
+      "defaultValue": "",
+      "required": false,
+      "helpMarkDown": "Token to access the wiki pages containing Architecture Decision Records (ADRs)."
+    },
+    {
+      "name": "reviewWithRemoteWikiADRs",
+      "type": "boolean",
+      "label": "Check with ADRs",
+      "defaultValue": false,
+      "helpMarkDown": "Specify whether to enable checking with Architecture Decision Records (ADRs) during the code review process.\n\n- Set to `true` to perform checks with ADRs.\n- Set to `false` to skip checks with ADRs.\n\nChecking with ADRs helps ensure that the code aligns with architectural decisions. Default value is `false`."
+    },
+    {
+      "name": "adrsRemoteWikiPath",
+      "type": "string",
+      "label": "ADRs Wiki Path",
+      "defaultValue": "/",
+      "required": false,
+      "helpMarkDown": "Path to the wiki pages containing Architecture Decision Records (ADRs)."
+    },
+    {
+      "name": "adrsRemoteWikiUrl",
+      "type": "string",
+      "label": "ADRs Wiki URL",
+      "defaultValue": "/",
+      "required": false,
+      "helpMarkDown": "URL to the wiki pages containing Architecture Decision Records (ADRs)."
+    },
+    {
+      "name": "adrsRemoteWikiId",
+      "type": "string",
+      "label": "ADRs Wiki ID",
+      "defaultValue": "",
+      "required": false,
+      "helpMarkDown": "ID of the wiki pages containing Architecture Decision Records (ADRs)."
+    },
+    {
+      "name": "adrsRemoteProjectId",
+      "type": "string",
+      "label": "ADRs Wiki Project ID",
+      "defaultValue": "",
+      "required": false,
+      "helpMarkDown": "Project ID of the wiki pages containing Architecture Decision Records (ADRs)."
+    },
+    {
+      "name": "adrsRemoteWikiToken",
       "type": "string",
       "label": "ADRs Wiki Token",
       "defaultValue": "",
